@@ -32,7 +32,7 @@ scripts\build_vs.bat
 ```bat
 cmake -S . -B build -G "Visual Studio 17 2022" -A x64
 cmake --build build --config Debug
-build\bin\ch01_cpp11.exe
+build\bin\Debug\ch01_cpp11.exe
 ```
 
 ### Linux / WSL
@@ -50,7 +50,7 @@ cmake --build build-linux -j$(nproc)
 ## 学习文档
 
 ```
-docs/CppLearningGuide.pdf     ← 完整手册（125 页），打印/平板阅读
+docs/CppLearningGuide.pdf     ← 完整手册（202 页），打印/平板阅读
 docs/CppLearningGuide.html    ← 同内容 HTML，带目录，浏览器直接看
 docs/CppLearningGuide.md      ← 同内容 Markdown，编辑器里看
 docs/parts/*.md               ← 分章节源文件
@@ -83,6 +83,11 @@ python scripts\build_pdf.py
 | 10 | UDP | `ch10_udp_server` `ch10_udp_client` | 见下 |
 | 11 | IO 多路复用 | `ch11_multiplex` | 见下 |
 | 12 | 迷你 HTTP 服务器 | `ch12_http_server` | 见下 |
+| 13 | C++ 易错点大全 | `ch13_pitfalls` | 直接运行 |
+| 14 | 智能指针深入 | `ch14_smartptr` | 直接运行 |
+| 15 | STL 源码剖析 | `ch15_stl_source` | 直接运行（**基准测试请用 Release**） |
+| 16 | Reactor 网络库 | `ch16_reactor_selftest` `ch16_echo_server` `ch16_chat_server` | 见下 |
+| 17 | MySQL 命令与原理 | `ch17_mysql` | 直接运行（无需安装 MySQL） |
 
 ### 网络章节的跑法
 
@@ -90,26 +95,26 @@ python scripts\build_pdf.py
 
 ```bat
 :: 终端 1（并发模型可选 iterative / thread / pool）
-build\bin\ch09_tcp_server.exe 8888 thread
+build\bin\Debug\ch09_tcp_server.exe 8888 thread
 
 :: 终端 2
-build\bin\ch09_tcp_client.exe 127.0.0.1 8888          :: 交互模式，打字回车
-build\bin\ch09_tcp_client.exe 127.0.0.1 8888 bench    :: 粘包演示 + RTT 压测
+build\bin\Debug\ch09_tcp_client.exe 127.0.0.1 8888          :: 交互模式，打字回车
+build\bin\Debug\ch09_tcp_client.exe 127.0.0.1 8888 bench    :: 粘包演示 + RTT 压测
 ```
 
 **第 10 章 UDP**：
 
 ```bat
-build\bin\ch10_udp_server.exe 9999
-build\bin\ch10_udp_client.exe 127.0.0.1 9999 demo     :: 消息边界 / 超时 / 吞吐
+build\bin\Debug\ch10_udp_server.exe 9999
+build\bin\Debug\ch10_udp_client.exe 127.0.0.1 9999 demo     :: 消息边界 / 超时 / 吞吐
 ```
 
 **第 11 章 IO 多路复用** —— 聊天室，开 2~3 个 telnet 互相广播：
 
 ```bat
-build\bin\ch11_multiplex.exe explain          :: 只看原理讲解，不启动服务
-build\bin\ch11_multiplex.exe 8890 select
-build\bin\ch11_multiplex.exe 8890 poll
+build\bin\Debug\ch11_multiplex.exe explain          :: 只看原理讲解，不启动服务
+build\bin\Debug\ch11_multiplex.exe 8890 select
+build\bin\Debug\ch11_multiplex.exe 8890 poll
 :: 另开终端: telnet 127.0.0.1 8890   （随便打字，会广播给其他终端）
 ```
 
@@ -122,7 +127,7 @@ epoll 模式需要 Linux：
 **第 12 章 HTTP 服务器**：
 
 ```bat
-build\bin\ch12_http_server.exe 8080
+build\bin\Debug\ch12_http_server.exe 8080
 ```
 
 然后浏览器打开 <http://127.0.0.1:8080>，或者：
@@ -134,6 +139,38 @@ curl -X POST -d "hello world" http://127.0.0.1:8080/api/echo
 curl http://127.0.0.1:8080/admin/panel                              # 401
 curl -H "Authorization: Bearer secret123" http://127.0.0.1:8080/admin/panel
 ```
+
+---
+
+**第 16 章 Reactor** —— 先跑自测（不用开两个终端，单进程验证全部功能）：
+
+```bat
+build\bin\Debug\ch16_reactor_selftest.exe
+```
+
+它会自动跑 8 组验证：基本回显、40 连接并发、2 MB 大消息分片、长度前缀协议粘包、
+跨线程 send、优雅关闭、高水位回调、吞吐压测。
+
+想手动交互：
+
+```bat
+:: 回显服务器（参数：端口 从属Reactor线程数）
+build\bin\Debug\ch16_echo_server.exe 9001 4
+:: 另一个终端： telnet 127.0.0.1 9001   或 Linux 下 nc 127.0.0.1 9001
+:: 支持 quit / stat 两个命令
+
+:: 聊天室 —— 开三个终端各自连上，互相发消息
+build\bin\Debug\ch16_chat_server.exe 9002 3
+:: 第一条消息是昵称，之后 /who 看在线，/quit 退出
+```
+
+> 第 15 章的性能基准**必须用 Release**，Debug 下 MSVC 的迭代器调试检查会让
+> 耗时放大 5~30 倍：
+>
+> ```bat
+> cmake --build build --config Release
+> build\bin\Release\ch15_stl_source.exe
+> ```
 
 ---
 
@@ -163,7 +200,17 @@ CppLearning/
     ├── ch09_tcp/                 tcp_server.cpp + tcp_client.cpp
     ├── ch10_udp/                 udp_server.cpp + udp_client.cpp
     ├── ch11_multiplex/           select / poll / epoll 聊天室
-    └── ch12_http/                迷你 HTTP 服务器
+    ├── ch12_http/                迷你 HTTP 服务器
+    ├── ch13_pitfalls/            40 个易错点
+    ├── ch14_smartptr/            智能指针 + 手写实现
+    ├── ch15_stl_source/          STL 源码剖析（手写容器）
+    ├── ch16_reactor/
+    │   ├── reactor/reactor.h     Reactor 库声明（含大量设计说明）
+    │   ├── reactor/reactor.cpp   实现
+    │   ├── reactor_selftest.cpp  8 组自动化验证
+    │   ├── echo_server.cpp       回显服务器
+    │   └── chat_server.cpp       聊天室（跨线程广播）
+    └── ch17_mysql/               MySQL 原理模拟（B+树/MVCC/LRU）
 ```
 
 ---

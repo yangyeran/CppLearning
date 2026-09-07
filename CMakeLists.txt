@@ -8,10 +8,13 @@ set(CMAKE_CXX_STANDARD 20)          # 主体用 C++20；C++23 章节单独提升
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-# 可执行文件统一输出到 bin/，方便查找
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY        ${CMAKE_BINARY_DIR}/bin)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG  ${CMAKE_BINARY_DIR}/bin)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR}/bin)
+# 可执行文件按配置分目录输出。
+# 必须分开：否则 Debug 与 Release 同名 exe 会互相覆盖，
+# 你以为在跑 Release，实际跑的是上一次构建的 Debug 版本（性能数据全废）。
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY               ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG         ${CMAKE_BINARY_DIR}/bin/Debug)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE       ${CMAKE_BINARY_DIR}/bin/Release)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO ${CMAKE_BINARY_DIR}/bin/RelWithDebInfo)
 
 if (MSVC)
     # /utf-8      源文件与执行字符集都按 UTF-8 处理（中文注释不乱码）
@@ -57,11 +60,16 @@ add_subdirectory(src/ch09_tcp)           # 9. TCP 回显 服务端+客户端
 add_subdirectory(src/ch10_udp)           # 10. UDP
 add_subdirectory(src/ch11_multiplex)     # 11. IO 多路复用 select/poll/epoll
 add_subdirectory(src/ch12_http)          # 12. 综合实战：迷你 HTTP 服务器
+add_subdirectory(src/ch13_pitfalls)      # 13. C++ 易错点大全
+add_subdirectory(src/ch14_smartptr)      # 14. 智能指针深入 + 手写实现
+add_subdirectory(src/ch15_stl_source)    # 15. STL 源码剖析（手写实现）
+add_subdirectory(src/ch16_reactor)       # 16. Reactor 完整实现 + 回显/聊天室
+add_subdirectory(src/ch17_mysql)         # 17. MySQL 命令 + 原理（B+树/MVCC/LRU）
 
 message(STATUS "")
 message(STATUS "==========================================================")
 message(STATUS " CppLearning 配置完成")
-message(STATUS " 可执行文件输出目录: ${CMAKE_BINARY_DIR}/bin")
+message(STATUS " 可执行文件输出目录: ${CMAKE_BINARY_DIR}/bin/<配置名>")
 message(STATUS " 编译器: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
 message(STATUS "==========================================================")
 message(STATUS "")

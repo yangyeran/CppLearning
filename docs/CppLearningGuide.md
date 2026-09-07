@@ -74,8 +74,33 @@
                         │  (3 天)                  │
                         └──────────────────────────┘
 
-总计约 4 周（每天 2~3 小时）。赶时间的话：第 0 章 + 第 1/3/4 章 + 第 6 章
+第 0~12 章约 4 周（每天 2~3 小时）；第 13~17 章是深入部分，另算 2~3 周。
+赶时间的话：第 0 章 + 第 1/3/4 章 + 第 6 章 + **第 13 章**（易错点收益最高）。
 + 第 8/9/11 章，一周能过一遍主干。
+```
+
+打完上面这条主线，再走进阶线（第 13~17 章）：
+
+```
+    ┌──────────────────────────┐
+    │  第 13 章  易错点大全     │  ← 写过代码之后再看，收益最大
+    └────────────┬─────────────┘
+                 ▼
+    ┌──────────────────────────┐
+    │  第 14 章  智能指针深入   │  手写 unique/shared/weak
+    └────────────┬─────────────┘
+                 ▼
+    ┌──────────────────────────┐
+    │  第 15 章  STL 源码剖析   │  手写 vector/string/list/红黑树/哈希表
+    └────────────┬─────────────┘
+                 ▼
+    ┌──────────────────────────┐
+    │  第 16 章  Reactor 实现   │  ← 全书技术收口：8+12+13+14 章全用上
+    └────────────┬─────────────┘
+                 ▼
+    ┌──────────────────────────┐
+    │  第 17 章  MySQL 原理     │  后端必备，与 C++ 独立，可随时插入
+    └──────────────────────────┘
 ```
 
 ---
@@ -97,6 +122,11 @@
 | 10 | UDP | `ch10_udp_server` + `ch10_udp_client` | 数据报 / 消息边界 / 超时 |
 | 11 | IO 多路复用 | `ch11_multiplex` | select / poll / epoll 聊天室 |
 | 12 | 综合实战 | `ch12_http_server` | 迷你 HTTP 服务器 |
+| 13 | **易错点大全** | `ch13_pitfalls` | 40 个坑：现象/原因/错误/正确/记忆 |
+| 14 | **智能指针深入** | `ch14_smartptr` | 用法 + 控制块原理 + 手写三种指针 |
+| 15 | **STL 源码剖析** | `ch15_stl_source` | 手写 vector/string SSO/list/红黑树/哈希表/introsort |
+| 16 | **Reactor 完整实现** | `ch16_reactor_selftest` `ch16_echo_server` `ch16_chat_server` | 可用的小型网络库，8 组自动化验证 |
+| 17 | **MySQL 命令与原理** | `ch17_mysql` | 命令速查 + 手写 B+树/MVCC/Buffer Pool |
 
 ---
 
@@ -131,7 +161,7 @@ scripts\build_vs.bat
 ```bat
 cmake -S . -B build -G "Visual Studio 17 2022" -A x64
 cmake --build build --config Debug
-build\bin\ch01_cpp11.exe
+build\bin\Debug\ch01_cpp11.exe
 ```
 
 ### 二、WSL2（学 epoll 必须）
@@ -3526,11 +3556,11 @@ ltrace ./prog                        # 看库函数调用
 
 ```bash
 # 终端 1
-build\bin\ch09_tcp_server.exe 8888 thread
+build\bin\Debug\ch09_tcp_server.exe 8888 thread
 
 # 终端 2
-build\bin\ch09_tcp_client.exe 127.0.0.1 8888          # 交互模式
-build\bin\ch09_tcp_client.exe 127.0.0.1 8888 bench    # 粘包演示 + 压测
+build\bin\Debug\ch09_tcp_client.exe 127.0.0.1 8888          # 交互模式
+build\bin\Debug\ch09_tcp_client.exe 127.0.0.1 8888 bench    # 粘包演示 + 压测
 ```
 
 ---
@@ -3810,8 +3840,8 @@ HTTP/2 的多路复用、HTTP/3 的 0-RTT 握手，本质上都在解决这个�
 ▶ 对应程序：`ch10_udp_server` + `ch10_udp_client`
 
 ```bash
-build\bin\ch10_udp_server.exe 9999
-build\bin\ch10_udp_client.exe 127.0.0.1 9999 demo
+build\bin\Debug\ch10_udp_server.exe 9999
+build\bin\Debug\ch10_udp_client.exe 127.0.0.1 9999 demo
 ```
 
 ## 10.1 和 TCP 的编程差异
@@ -3917,9 +3947,9 @@ setsockopt(fd, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq));
 ▶ 对应程序：`ch11_multiplex`
 
 ```bash
-build\bin\ch11_multiplex.exe explain          # 只看原理讲解
-build\bin\ch11_multiplex.exe 8890 select      # 聊天室服务器（所有平台）
-build\bin\ch11_multiplex.exe 8890 poll
+build\bin\Debug\ch11_multiplex.exe explain          # 只看原理讲解
+build\bin\Debug\ch11_multiplex.exe 8890 select      # 聊天室服务器（所有平台）
+build\bin\Debug\ch11_multiplex.exe 8890 poll
 ./build-linux/bin/ch11_multiplex 8890 epoll   # 仅 Linux
 
 # 测试：开 2~3 个终端各跑 telnet 127.0.0.1 8890，随便打字会广播给其他人
@@ -4185,7 +4215,7 @@ if (n < (ssize_t)len) {
 ▶ 对应程序：`ch12_http_server`
 
 ```bash
-build\bin\ch12_http_server.exe 8080
+build\bin\Debug\ch12_http_server.exe 8080
 # 浏览器打开 http://127.0.0.1:8080
 curl http://127.0.0.1:8080/api/time
 curl -X POST -d "hello" http://127.0.0.1:8080/api/echo
@@ -4383,7 +4413,2899 @@ HTTP/3 用 UDP + QUIC，每个流独立，一个流丢包不影响其它流。
 
 <div style="page-break-after: always;"></div>
 
-# 附录 A · 四周复习计划
+# 第 13 章 · C++ 易错点大全
+
+▶ 对应程序：`ch13_pitfalls`
+
+这一章是全书唯一「反向」组织的章节：不讲怎么写对，讲**怎么会写错**。
+
+先说一件比记住所有坑更重要的事。
+
+## 0. 关于「未定义行为」
+
+UB（Undefined Behavior，未定义行为）不是「程序会崩溃」，而是**标准放弃对程序行为做任何约定**。编译器可以：
+
+- 让它看起来正常运行（最坏的情况）
+- 优化掉你的检查代码
+- 在与出错点毫无关系的地方崩溃
+- Debug 下正常，Release 下出错
+
+举个真实的例子：
+
+```cpp
+bool check_overflow(int x) {
+    return x + 1 > x;      // 有符号溢出是 UB
+}
+```
+
+编译器的推理是：「有符号溢出是 UB，UB 不允许发生，所以 `x + 1` 一定大于 `x`」，于是把整个函数优化成 `return true;`。你的溢出检查被**删掉了**，而且没有任何警告。
+
+所以对 UB 的正确态度不是「小心一点」，而是**用工具把它挡在编译期和测试期**：
+
+```bash
+# MSVC
+cl /W4 /permissive- /fsanitize=address /analyze main.cpp
+
+# GCC / Clang
+g++ -Wall -Wextra -Wpedantic -fsanitize=address,undefined -g main.cpp
+```
+
+`-fsanitize=address` 能抓到越界、悬垂、双重释放；`undefined` 能抓到溢出、错误的类型转换。**开销大约 2 倍，但它能在测试阶段发现 90% 的内存 bug**，绝对值得。
+
+再配一个静态检查：
+
+```bash
+clang-tidy main.cpp -checks='bugprone-*,cppcoreguidelines-*,performance-*'
+```
+
+`bugprone-use-after-move` 一条规则就能省掉你以后无数小时。
+
+---
+
+## 1. 初始化与类型系统
+
+### 1.1 花括号 vs 圆括号
+
+```cpp
+std::vector<int> a(10, 5);   // 10 个 5
+std::vector<int> b{10, 5};   // 2 个元素：10 和 5
+```
+
+只要类型有接收 `std::initializer_list` 的构造函数，花括号就**优先**匹配它，哪怕另一个重载"更合适"。这是标准规定的优先级，没有例外。
+
+更坑的是它的行为**依赖元素类型**：
+
+```cpp
+std::vector<std::string> c{10, "x"};   // string 无法从 10 转换
+                                        // -> 回退到 (count, value)，得到 10 个 "x"
+```
+
+**规则：指定"几个几"一律用圆括号。** 花括号只用于"就这几个元素"。
+
+### 1.2 auto 会衰减
+
+`auto` 完全照抄模板实参推导规则：按值推导会丢引用、丢顶层 const、数组退化成指针。
+
+```cpp
+std::vector<BigObject> v;
+for (auto x : v)        { }   // 每次循环拷贝一个 BigObject！
+for (const auto& x : v) { }   // 只读，正确
+for (auto& x : v)       { }   // 要修改，正确
+```
+
+范围 for 里写 `auto x` 是**最常见的性能问题**，因为它不报错、不警告，只是慢。
+
+| 写法 | 推导结果（源为 `const int ci`） |
+|---|---|
+| `auto a = ci;` | `int`（const 丢了，a 可以改） |
+| `const auto a = ci;` | `const int` |
+| `auto& a = ci;` | `const int&`（引用保留被引用对象的 const） |
+| `auto&& a = ci;` | `const int&`（万能引用 + 引用折叠） |
+| `decltype(auto) a = ci;` | `const int`（完整保留） |
+
+### 1.3 `vector<bool>` 不是容器
+
+它是个特化版本，为省内存按 bit 存储。`operator[]` 没法返回 `bool&`（引用不能指向一个 bit），只能返回代理对象：
+
+```cpp
+std::vector<bool> vb{false, false};
+auto proxy = vb[0];    // 类型不是 bool，是 vector<bool>::reference
+proxy = true;          // 改到了容器里！
+bool real = vb[1];     // 显式写 bool 才是真拷贝
+bool* p = &vb[0];      // 编译错误：无法取一个 bit 的地址
+```
+
+需要 bool 容器时用 `std::vector<char>`、`std::deque<bool>` 或 `std::bitset`。
+
+### 1.4 无符号下溢：`size() - 1`
+
+`size()` 返回无符号的 `size_t`。空容器上 `0u - 1` 不是 `-1`，而是回绕成 `SIZE_MAX`（18446744073709551615）。
+
+```cpp
+// 空容器时循环体执行天文数字次
+for (size_t i = 0; i < v.size() - 1; ++i) { }
+
+// 正确写法 1：把减法移到另一侧
+for (size_t i = 0; i + 1 < v.size(); ++i) { }
+
+// 正确写法 2：C++20 的 std::ssize 返回有符号长度
+for (std::ptrdiff_t i = 0; i < std::ssize(v) - 1; ++i) { }
+```
+
+配套的比较陷阱：
+
+```cpp
+int si = -1; unsigned ui = 1;
+si < ui;    // false！si 被转成 4294967295
+```
+
+有符号与无符号比较时，**有符号的一方会被转成无符号**。MSVC 的 C4018 和 GCC 的 `-Wsign-compare` 就是在警告这个，不要忽略。
+
+### 1.5 浮点相等比较
+
+IEEE-754 二进制浮点无法精确表示 `0.1`、`0.2`、`0.3`，就像十进制无法精确表示 1/3。
+
+```cpp
+0.1 + 0.2 == 0.3        // false
+```
+
+正确的比较要**同时**考虑绝对容差和相对容差：
+
+```cpp
+bool nearly_equal(double x, double y, double eps = 1e-9) {
+    double diff = std::abs(x - y);
+    if (diff <= eps) return true;                        // 处理接近 0
+    return diff <= eps * std::max(std::abs(x), std::abs(y));  // 处理大数值
+}
+```
+
+固定容差在大数值上会失效：`1e16 == 1e16 + 1` 是 `true`，因为 double 在这个量级已经分不出 1 的差别。
+
+**金额绝对不要用 double。** 用整数存"分"，或用定点/十进制库。数据库里对应的是 `DECIMAL` 而不是 `FLOAT`（见第 17 章）。
+
+---
+
+## 2. 指针、引用、生命周期
+
+这一组是崩溃的主要来源。
+
+### 2.1 返回局部变量的引用
+
+```cpp
+const std::string& bad() {
+    std::string local = "x";
+    return local;             // UB：local 在此行之后销毁
+}
+```
+
+返回引用只能指向比函数活得更久的东西：成员变量、静态变量、参数。
+
+不要为了"性能"返回引用 —— 按值返回有 NRVO（命名返回值优化），编译器会直接在调用方的位置构造对象，**零拷贝零移动**。
+
+### 2.2 string_view / span 悬垂
+
+这是现代 C++ 的新型踩坑重灾区。`string_view` 只存"指针 + 长度"，**不拥有**数据。
+
+```cpp
+std::string make_temp() { return "临时对象"; }
+
+std::string_view sv = make_temp();   // UB！临时 string 在这一行末尾销毁
+std::cout << sv;                      // 读已释放内存
+```
+
+正确做法：
+
+```cpp
+std::string owner = make_temp();     // 先让具名变量持有所有权
+std::string_view sv = owner;          // 再取 view
+```
+
+另一个坑：`string_view` **不保证以 `\0` 结尾**，不能直接喂给 C 接口：
+
+```cpp
+std::string full = "HelloWorld";
+auto part = std::string_view(full).substr(0, 5);   // "Hello"
+printf("%s", part.data());                          // 错！会打印 "HelloWorld"
+printf("%.*s", (int)part.size(), part.data());      // 对：带上长度
+```
+
+**准则：`string_view` 只适合做函数参数，不适合做成员变量和返回值。** 类的成员存 `string_view` 几乎总是 bug。
+
+### 2.3 迭代器失效
+
+各容器的失效规则（面试高频，值得背）：
+
+| 容器 | 插入 | 删除 |
+|---|---|---|
+| `vector` | 扩容则**全部**失效；未扩容则插入点之后失效 | 删除点之后失效 |
+| `deque` | 迭代器基本都失效；**两端**操作时引用/指针不失效 | 同 |
+| `list` / `forward_list` | 不失效 | 仅被删元素失效 |
+| `map` / `set` | 不失效 | 仅被删元素失效 |
+| `unordered_*` | rehash 时**迭代器**全失效，但引用/指针不失效 | 仅被删元素失效 |
+
+`unordered_map` 那一行是个重要细节：rehash 只是把节点重新挂到不同桶上，**节点本身没有移动**，所以指向 value 的指针和引用依然有效。
+
+边遍历边删的正确写法：
+
+```cpp
+// 手写：用 erase 的返回值
+for (auto it = v.begin(); it != v.end(); ) {
+    if (pred(*it)) it = v.erase(it);   // erase 返回下一个有效迭代器
+    else           ++it;                // 只有不删时才自增
+}
+
+// C++20：一行搞定，而且是 O(n)
+std::erase_if(v, pred);
+```
+
+### 2.4 `std::remove` 不会真的删除
+
+```cpp
+std::vector<int> v{1, 2, 3, 2, 5};
+std::remove(v.begin(), v.end(), 2);
+// v.size() 仍是 5！尾部残留旧值
+```
+
+`std::remove` 是**算法**，它不知道容器怎么删元素（这是 STL"算法与容器分离"的代价，见第 15 章）。它只把要保留的元素往前搬，返回"新逻辑末尾"。
+
+```cpp
+// C++20 之前：erase-remove 惯用法
+v.erase(std::remove(v.begin(), v.end(), 2), v.end());
+
+// C++20 起
+std::erase(v, 2);
+```
+
+### 2.5 const 的位置
+
+**const 修饰它左边的东西；左边没有就修饰右边。** 把声明从右往左念：
+
+```cpp
+const int* p1;         // 「指向 const int 的指针」：值只读，指针可变
+int* const p2;         // 「指向 int 的 const 指针」：指针只读，值可变
+const int* const p3;   // 都只读
+int const* p4;         // 等价于 const int*
+```
+
+建议统一写在类型右边（`int const*`），这样"const 修饰左边"的规则永远一致。
+
+---
+
+## 3. 类与对象
+
+### 3.1 基类析构函数不是 virtual
+
+```cpp
+struct Base { ~Base() {} };                    // 少了 virtual
+struct Derived : Base { std::vector<int> big; };
+
+Base* p = new Derived();
+delete p;    // 只调用 Base::~Base，Derived 的成员泄漏
+```
+
+**只要一个类可能被继承并通过基类指针删除，析构就必须 `virtual`。**
+
+反过来：不打算被继承的类加 `final` 比加 `virtual` 析构更省（没有虚表开销）。
+
+### 3.2 构造/析构函数里调用虚函数
+
+对象是"由内向外"构造的。基类构造函数执行时派生类部分还没初始化，所以标准规定此时对象的**动态类型就是基类**，虚表还指向基类。
+
+```cpp
+struct Base {
+    Base() { who(); }                          // 永远调 Base::who
+    virtual void who() { }
+};
+struct Derived : Base {
+    int value_ = 999;
+    void who() override { use(value_); }        // 若被调用，value_ 还未初始化
+};
+```
+
+如果基类的 `who()` 是**纯虚**的，这就是 UB（调用纯虚函数，通常直接崩）。
+
+需要"构造后初始化"就单独提供 `init()` 方法，或用工厂函数。
+
+### 3.3 成员初始化顺序 = 声明顺序
+
+成员按**类中声明的顺序**初始化，初始化列表里的书写顺序**不影响**执行顺序。
+
+```cpp
+class Bad {
+    size_t size_;      // 先声明 -> 先初始化
+    size_t count_;
+public:
+    Bad(size_t n) : count_(n), size_(count_ * 2) { }
+    //                          ^^^^^^^^^^^^^^^ size_ 先算，此时 count_ 是垃圾
+};
+```
+
+**规则：初始化列表只依赖构造函数参数，不依赖其它成员。** 顺序与声明顺序保持一致（MSVC 的 C5038、GCC 的 `-Wreorder` 会警告）。
+
+### 3.4 忘记 explicit
+
+单参数构造函数（或除首参外都有默认值的构造函数）会成为"转换构造函数"，允许编译器插入一次隐式转换：
+
+```cpp
+struct Bad  { Bad(size_t len); };
+struct Good { explicit Good(size_t len); };
+
+void f(const Bad& b);
+f('A');            // 编译通过！char -> size_t -> Bad，两次隐式转换
+```
+
+**准则：单参数构造函数默认加 explicit**，除非你确实想要隐式转换。`std::vector` 的 `explicit vector(size_t)` 就是为了阻止 `std::vector<int> v = 10;`。
+
+### 3.5 对象切片
+
+```cpp
+std::vector<Base> bad;
+bad.push_back(Derived{});    // 切片！派生部分被切掉，虚表指针改成 Base 的
+
+std::vector<std::unique_ptr<Base>> good;
+good.push_back(std::make_unique<Derived>());   // 正确
+```
+
+按值传参也会切片。**多态容器必须存指针。**
+
+防御手段：基类可以 `delete` 拷贝构造，让切片直接编译失败。
+
+### 3.6 名字隐藏
+
+名字查找是**逐作用域**进行的：在派生类里找到该名字就停止，根本不会去看基类。这与重载解析是两个独立阶段。
+
+```cpp
+struct Base { void f(int); void f(double); };
+struct Derived : Base {
+    void f(std::string);      // 基类的 f(int)/f(double) 全被隐藏
+};
+Derived d;
+d.f(1);                        // 编译错误：int 转不成 string
+d.Base::f(1);                  // 只能显式限定
+```
+
+解法：`using Base::f;` 把基类的重载拉进本作用域。
+
+### 3.7 自赋值与 copy-and-swap
+
+错误的拷贝赋值实现是"先释放旧资源，再拷贝新资源"—— 自赋值时"新资源"就是刚被释放的那块内存。
+
+正确做法是 **copy-and-swap**，一份代码同时解决自赋值安全、异常安全、拷贝与移动赋值：
+
+```cpp
+class Widget {
+public:
+    Widget& operator=(Widget o) noexcept {   // 注意：按值传参
+        swap(o);                              // 只交换指针，不会抛
+        return *this;                         // o 析构时释放旧资源
+    }
+    void swap(Widget& o) noexcept { std::swap(data_, o.data_); }
+};
+```
+
+参数按值传递时先完成拷贝（可能抛异常，但此时 `*this` 还完好），再 swap（不会抛）—— 这就给出了**强异常保证**。
+
+### 3.8 移动之后继续使用
+
+标准只保证被移动对象处于"有效但未指定"状态：可以安全析构、可以重新赋值，但**内容不确定**。
+
+```cpp
+std::string s = "abc";
+std::string t = std::move(s);
+// s 现在的内容不确定（标准库实现里通常变空，但别依赖）
+s = "重新赋值";        // 唯一推荐的后续操作
+```
+
+例外：`unique_ptr` 移动后**一定**是 `nullptr`，这个有标准保证。
+
+---
+
+## 4. 现代 C++ 的新型坑
+
+### 4.1 lambda 捕获与生命周期
+
+```cpp
+std::function<int()> make() {
+    int local = 42;
+    return [&local]{ return local; };    // UB：local 在函数返回后就没了
+    return [local]{ return local; };     // 正确：值捕获
+}
+```
+
+**准则：立即执行的 lambda 可以用 `[&]`；要存起来 / 跨线程 / 异步执行的，必须值捕获。**
+
+C++14 起可以初始化捕获，用来移动捕获 move-only 对象：
+
+```cpp
+auto up = std::make_unique<int>(5);
+auto f = [p = std::move(up)]{ return *p; };
+```
+
+### 4.2 捕获 this —— 异步回调的头号崩溃原因
+
+`[this]` 和 C++20 前的 `[=]` 捕获的是**裸指针** this，不延长对象寿命。对象销毁后回调才被触发，就是访问已释放内存。
+
+正确姿势：
+
+```cpp
+class Session : public std::enable_shared_from_this<Session> {
+public:
+    auto makeCallback() {
+        return [weak = weak_from_this()] {          // C++17
+            if (auto self = weak.lock()) {          // 提升成功 = 对象还活着
+                self->doWork();
+            }
+            // 提升失败 = 对象已销毁，安全跳过
+        };
+    }
+};
+```
+
+第 16 章的 `TcpConnection` 大量使用这个模式 —— 网络库里连接随时可能断开，这是必需的。
+
+### 4.3 shared_ptr 循环引用
+
+```
+父节点 shared_ptr ──► 子节点
+子节点 shared_ptr ──► 父节点      两边计数都停在 1，永不释放
+```
+
+**准则：「拥有」关系用 `shared_ptr`，「反向引用/观察」关系用 `weak_ptr`。**
+
+典型：父节点拥有子节点（shared），子节点指回父节点（weak）。
+
+### 4.4 同一裸指针交给两个 shared_ptr
+
+`shared_ptr` 的引用计数存在**控制块**里。用裸指针构造 `shared_ptr` 会**新建一个控制块**：
+
+```cpp
+int* raw = new int(42);
+std::shared_ptr<int> sp1(raw);
+std::shared_ptr<int> sp2(raw);   // 第二个控制块！两次 delete -> 崩溃
+```
+
+**准则：永远用 `make_shared`，不让裸指针出现。**
+
+同理，类内部不能 `return std::shared_ptr<T>(this)` —— 必须继承 `enable_shared_from_this` 并用 `shared_from_this()`。详见第 14 章。
+
+### 4.5 万能引用吞掉重载
+
+`T&&` 模板是**精确匹配**（不需要任何转换），而普通重载遇到非精确类型需要一次转换。所以模板几乎总是赢：
+
+```cpp
+void f(int);
+template <typename T> void f(T&&);
+
+short s = 1;
+f(s);        // 进了模板！因为 short -> int 需要提升，而模板是精确匹配
+```
+
+C++20 起用 concept 约束解决：
+
+```cpp
+template <typename T>
+    requires (!std::is_arithmetic_v<std::remove_cvref_t<T>>)
+void f(T&&);
+void f(int);         // 现在算术类型正确走这个
+```
+
+第 14 章手写 `MySharedPtr` 时真实遇到了这个坑：删除器模板把"已有控制块"的构造函数挤掉了，因为派生类指针对模板是精确匹配。
+
+### 4.6 std::move 的三种误用
+
+**误用 1：在 return 语句里 move**
+
+```cpp
+std::vector<int> good() { std::vector<int> v; return v; }              // NRVO，零成本
+std::vector<int> bad()  { std::vector<int> v; return std::move(v); }   // 禁用 NRVO！
+```
+
+`return local;` 本身有 NRVO（直接在调用方构造）。写 `std::move` 反而**阻止**了这个优化，退化成一次移动构造。
+
+**误用 2：对 const 对象 move**
+
+```cpp
+const std::string cs = "x";
+std::string dst = std::move(cs);   // std::move(const T&) 得到 const T&&
+                                    // 匹配不上 T&& 的移动构造，静默退回拷贝
+```
+
+**误用 3：在万能引用上用 move 而不是 forward**
+
+```cpp
+template <typename T>
+void wrong(T&& arg) { std::string s = std::move(arg); }        // 无条件搬走
+template <typename T>
+void right(T&& arg) { std::string s = std::forward<T>(arg); }  // 保持原值类别
+```
+
+**口诀：参数写的是 `T&&`（模板推导）就用 `forward`，写的是 `Widget&&` 就用 `move`。**
+
+### 4.7 auto 遇到花括号
+
+```cpp
+auto a = 1;       // int
+auto b{1};        // int（C++17 起；C++11/14 是 initializer_list<int>）
+auto c = {1};     // initializer_list<int>  <- 意料之外
+auto d = {1, 2};  // initializer_list<int>
+```
+
+`initializer_list` 内部只是指针 + 长度，**不拥有数据**，别存起来（又是悬垂）。
+
+---
+
+## 5. 并发
+
+### 5.1 `++` 不是原子操作
+
+`counter++` 是"读-改-写"三步。两个线程可能都读到 100，各自加到 101 写回 —— 一次自增就丢了。这是 UB，不只是"结果不准"。
+
+| 方案 | 适用场景 |
+|---|---|
+| `std::atomic<int>` | 单个变量，最快 |
+| `std::mutex` | 需要保持多个变量之间的一致性 |
+| 无共享 | 最好的方案：每线程独立数据，最后归并 |
+
+### 5.2 条件变量必须带谓词
+
+两个独立问题：
+
+- **虚假唤醒**：`wait` 允许无理由返回，必须循环检查条件
+- **丢失唤醒**：如果 `notify` 发生在 `wait` 之前，这次通知就丢了，`wait` 会一直等下去
+
+带谓词的 `wait` 一次性解决两个（它内部就是 `while` 循环）：
+
+```cpp
+cv.wait(lk, [&]{ return ready; });     // 永远这样写
+cv.wait(lk);                            // 永远不要这样写
+```
+
+标准三件套：**持锁改状态 → 解锁 → notify**。等待方一律用谓词版。
+
+### 5.3 死锁
+
+三种解法：
+
+1. 全局固定加锁顺序（比如按地址或 id 排序）
+2. `std::scoped_lock lk(m1, m2);` —— C++17，内部有死锁避免算法
+3. 缩小临界区，**不要持锁调用外部代码**（回调可能又来加同一把锁）
+
+第 16 章聊天室的广播就用了第 3 条：先把成员列表拷出来再解锁，然后才发送。
+
+### 5.4 thread 忘记 join
+
+`std::thread` 析构时若仍是 joinable 状态，标准规定调用 `std::terminate`。这是刻意设计 —— 默认 detach 会导致悬垂引用，默认 join 会在析构里意外阻塞，两者都比直接崩更危险。
+
+C++20 起用 `std::jthread`，析构自动 `request_stop()` + `join()`：
+
+```cpp
+std::jthread jt([](std::stop_token st) {
+    while (!st.stop_requested()) { work(); }
+});
+```
+
+### 5.5 volatile 不是 atomic
+
+`volatile` 只保证"每次都从内存读，不做寄存器缓存"，用于内存映射硬件寄存器。它**不提供**原子性，也**不建立**内存屏障，无法阻止 CPU 和编译器的指令重排。
+
+**线程同步一律用 `std::atomic`；`volatile` 只用于硬件寄存器和信号处理。**
+
+---
+
+## 6. 其它高频坑
+
+### 6.1 数组退化
+
+数组作为函数参数会退化成指针，长度信息彻底丢失。`void f(int arr[10])` 和 `void f(int* arr)` **完全等价**，那个 10 被忽略。
+
+```cpp
+void bad(int arr[10])  { sizeof(arr); }        // 8，是指针大小
+template <size_t N>
+void good(int (&arr)[N]) { }                    // 数组引用，保留长度
+void best(std::span<int> s) { s.size(); }       // C++20 首选
+```
+
+`std::span` 既保留长度，又能接受 `vector` / `array` / C 数组。
+
+### 6.2 宏
+
+```cpp
+#define SQUARE_BAD(x)  x * x        // SQUARE_BAD(1+2) -> 1+2*1+2 = 5
+#define SQUARE_OK(x)   ((x) * (x))  // 优先级对了，但仍会求值两次
+constexpr int best(int x) { return x * x; }     // 只求值一次，类型安全
+```
+
+`SQUARE_OK(i++)` 会让 `i` 自增两次。**能用 constexpr 函数、模板、inline 就绝不用宏。**
+
+Windows 上记得 `#define NOMINMAX`，否则 `min`/`max` 宏会和 `std::min`/`std::max` 冲突。
+
+### 6.3 求值顺序
+
+C++17 前，函数参数的求值顺序完全未指定；C++17 起规定"参数之间不交错"，但**顺序仍然未指定**。
+
+```cpp
+printf("%d %d", i++, i++);    // 可能 "0 1" 也可能 "1 0"
+```
+
+**一条语句里不要对同一个变量做多次修改。**
+
+C++17 起确定顺序的：`<<`/`>>` 从左到右；`a.b()`、`a->b()` 先求 `a`；赋值先求右侧。
+
+### 6.4 异常安全
+
+```cpp
+f(new A, new B);    // 若第二个 new 抛异常，第一块内存就泄漏了
+f(std::make_unique<A>(), std::make_unique<B>());   // 安全
+```
+
+`make_unique` 把"分配"和"接管所有权"绑成一个不可分割的操作。
+
+**RAII 是 C++ 异常安全的唯一可靠手段。** 手写 try/catch 清理必然遗漏路径。通用守卫：
+
+```cpp
+template <typename F>
+class ScopeGuard {
+    F f_; bool active_ = true;
+public:
+    explicit ScopeGuard(F f) : f_(std::move(f)) {}
+    ~ScopeGuard() { if (active_) f_(); }
+    void dismiss() { active_ = false; }
+};
+template <typename F> ScopeGuard(F) -> ScopeGuard<F>;
+```
+
+### 6.5 map 的 operator[] 会插入
+
+`operator[]` 的语义是"返回该键的引用，不存在就默认构造插入"。所以它不可能是 const 成员函数。
+
+```cpp
+int v = m["不存在的键"];      // 悄悄插入了 {"不存在的键", 0}
+
+// 查询要用这些
+if (auto it = m.find(k); it != m.end()) { }
+if (m.contains(k)) { }                        // C++20
+m.at(k);                                       // 不存在时抛 out_of_range
+
+// 插入要用这些
+m.try_emplace(k, args...);      // 键存在时不构造 value
+m.insert_or_assign(k, v);
+```
+
+---
+
+## 速查：最容易犯的十个
+
+| # | 坑 | 后果 |
+|---|---|---|
+| 1 | 基类析构没写 virtual | 派生类资源泄漏 |
+| 2 | 迭代器失效后继续用 | 随机崩溃 |
+| 3 | `string_view` / `span` 悬垂 | 读已释放内存 |
+| 4 | `shared_ptr` 循环引用 | 内存永不释放 |
+| 5 | lambda 用 `[&]` 捕获后异步执行 | 悬垂引用 |
+| 6 | `size() - 1` 在空容器上 | 无符号下溢 |
+| 7 | 条件变量 `wait` 不带谓词 | 偶发卡死 |
+| 8 | `map` 用 `[]` 做查询 | 悄悄插入 |
+| 9 | `std::remove` 后忘记 `erase` | 元素没删掉 |
+| 10 | move 之后继续使用原对象 | 值不确定 |
+
+隐蔽程度排名第一的其实不在上表里 —— 是**隐式类型转换导致的索引失效**（第 17 章 17.7）。它不在 C++ 层面，而在 SQL 层面，不报错、不警告，只是慢 1000 倍。
+
+# 第 14 章 · 智能指针深入
+
+▶ 对应程序：`ch14_smartptr`
+
+## 1. 一句话说清它解决什么
+
+智能指针**不是**垃圾回收。它做的是一件更根本的事：**把"谁负责释放"这个信息写进类型系统，让编译器帮你检查。**
+
+裸指针的问题不是"容易忘记 delete"，而是 `T*` 这个类型**什么都没说**：
+
+```cpp
+void process(Widget* w);
+```
+
+看这个签名，你无法回答：我要不要释放它？它可以为空吗？函数会不会保存它？函数会不会释放它？——只能看文档、看实现、猜。
+
+换成智能指针，签名自己就说清楚了：
+
+| 签名 | 含义 |
+|---|---|
+| `void sink(std::unique_ptr<T> p)` | 我**接管**所有权（调用方必须 move 进来） |
+| `std::unique_ptr<T> source()` | 我把所有权**交给**你（工厂函数） |
+| `void use(const T& t)` | 我只读，所有权在你那儿 ← **最常用** |
+| `void modify(T& t)` | 我要改，所有权在你那儿 |
+| `void maybe(T* p)` | 我只读，且它可能为空 |
+| `void share(std::shared_ptr<T> p)` | 我要**共享**所有权（延长它的寿命） |
+
+反例：`void bad(std::shared_ptr<T> p)` —— 只是想读一下，却强迫调用方承担引用计数的原子操作开销，还把接口和 `shared_ptr` 绑死了。
+
+## 2. 裸指针的四种失败模式
+
+**失败 1：忘记 delete。** 单次泄漏 32 字节看着无害，但如果这个函数在事件循环里每秒调用一千次，一天就是 2.7 GB。
+
+**失败 2：提前 return / 抛异常跳过了 delete。**
+
+```cpp
+void f() {
+    Widget* p = new Widget();
+    if (!check()) return;      // 泄漏路径 1
+    may_throw();               // 泄漏路径 2
+    delete p;                  // 只有一切顺利才走到这里
+}
+```
+
+一个函数有 N 个出口，你就要写 N 处 delete。异常路径**根本无法用 delete 覆盖** —— 这是 RAII 出现的直接原因。
+
+**失败 3：重复 delete。** 更隐蔽的版本是两个模块都以为自己拥有这块内存。
+
+**失败 4：悬垂指针（use-after-free）。** 最难查：崩溃点离出错点很远，且 Debug 下常常"正常"。
+
+`ch14_smartptr` 的 Part A 实测了异常路径：裸指针版本抛异常后**没有任何析构输出**（泄漏），`unique_ptr` 版本的析构在抛出时（栈展开）就执行了。
+
+## 3. unique_ptr —— 默认选择
+
+### 3.1 零开销
+
+内部就是一个裸指针，所有操作编译期内联掉。**没有任何运行时代价**：
+
+```
+sizeof(Widget*)                    = 8
+sizeof(unique_ptr<Widget>)         = 8      完全一样
+sizeof(unique_ptr<W, 无捕获lambda>) = 8      空基类优化
+sizeof(unique_ptr<W, 函数指针>)     = 16     要存函数指针
+```
+
+所以**不要因为怕性能而用裸指针**。同时这也告诉你：删除器优先用无捕获 lambda，而不是函数指针。
+
+### 3.2 核心操作
+
+```cpp
+auto p = std::make_unique<Widget>(args...);   // 首选：一次分配，异常安全
+
+auto q = std::move(p);      // 转移所有权，p 变成 nullptr（标准保证）
+// auto q = p;              // 编译错误：拷贝被 delete —— 这就是「独占」的实现
+
+Widget* raw = p.release();  // 放弃所有权，**你现在要负责 delete**
+p.reset(new Widget());      // 释放旧的，接管新的
+p.reset();                  // 等价于 p = nullptr
+```
+
+`release()` 的唯一正当用途是把所有权交给 C API。
+
+### 3.3 自定义删除器：管理任何资源
+
+智能指针不只管 `new` 出来的内存 —— 任何"需要成对操作"的资源都能管：
+
+```cpp
+// FILE* 要用 fclose
+auto closer = [](std::FILE* f) { if (f) std::fclose(f); };
+std::unique_ptr<std::FILE, decltype(closer)> fp(std::fopen("f.txt", "w"), closer);
+
+// malloc 的内存要用 free
+auto freer = [](void* p) { std::free(p); };
+std::unique_ptr<void, decltype(freer)> mem(std::malloc(1024), freer);
+
+// socket、互斥量、GPU 句柄、数据库连接、事务……同理
+```
+
+注意：**`unique_ptr` 的删除器类型是模板参数的一部分**，所以不同删除器的 `unique_ptr<FILE, ...>` 是不同类型，不能放进同一个容器。`shared_ptr` 相反（删除器存在控制块里，不进类型）。
+
+### 3.4 两个典型应用
+
+**工厂函数返回多态对象：**
+
+```cpp
+std::unique_ptr<Shape> make_shape(const std::string& kind) {
+    if (kind == "circle") return std::make_unique<Circle>(2.0);
+    if (kind == "rect")   return std::make_unique<Rect>(3.0, 4.0);
+    return nullptr;
+}
+```
+
+调用方拿到所有权，多态可用，且不可能忘记释放。
+
+**Pimpl —— 隐藏实现、稳定 ABI、降低编译依赖：**
+
+```cpp
+// widget.h —— 头文件干净，改实现不触发下游重编译
+class Widget {
+public:
+    Widget();
+    ~Widget();                       // 必须在 .cpp 定义（此处 Impl 不完整）
+    Widget(Widget&&) noexcept;
+    Widget& operator=(Widget&&) noexcept;
+    void draw() const;
+private:
+    struct Impl;                     // 只声明
+    std::unique_ptr<Impl> impl_;
+};
+
+// widget.cpp
+struct Widget::Impl { /* 全部重量级细节 */ };
+Widget::Widget() : impl_(std::make_unique<Impl>()) {}
+Widget::~Widget() = default;         // 到这里 Impl 已完整
+```
+
+**注意那个 `~Widget()` 必须在 .cpp 里定义。** 如果让编译器在头文件里隐式生成，它需要 `Impl` 的完整定义来调析构，而头文件里只有声明 —— 报一个很难懂的错误。这是 Pimpl 最常见的踩坑点。
+
+## 4. shared_ptr —— 内部结构
+
+`shared_ptr` 是**两个指针**：
+
+```
+shared_ptr<T> sp;              控制块 (control block)
+┌──────────────┐              ┌────────────────────────┐
+│ ptr        ──┼─────────────►│ strong_count  (原子)   │
+│ ctrl       ──┼─────────────►│ weak_count    (原子)   │
+└──────────────┘              │ deleter                │
+                              │ allocator              │
+                              └────────────────────────┘
+```
+
+### 4.1 两个计数的分工
+
+很多人只知道 strong。分工是：
+
+- `strong_count == 0` → 销毁**对象**（调 T 的析构 / 删除器）
+- `weak_count == 0` → 释放**控制块本身**
+
+为什么要分开？因为 `weak_ptr` 必须能在对象已死后安全地回答"对象还活着吗"—— 它要读 `strong_count`，所以控制块必须比对象活得久。
+
+实现细节：`weak_count` 的**初值是 1**。所有 `shared_ptr` 作为一个整体，共同持有"一份 weak 引用"。这样最后一个 shared 走掉时（strong: 1→0），顺便把这份 weak 也还掉，逻辑统一，无需特殊分支。
+
+### 4.2 make_shared vs shared_ptr(new T)
+
+| | `shared_ptr<T>(new T)` | `make_shared<T>()` |
+|---|---|---|
+| 堆分配次数 | 2 次（对象 + 控制块） | **1 次**（对象内嵌在控制块里） |
+| 异常安全 | 控制块分配失败时对象泄漏 | 安全 |
+| 缓存局部性 | 对象和计数分开 | 相邻，更好 |
+| 缺点 | — | 只要还有 weak_ptr，整块内存（含对象部分）都无法归还系统 |
+
+**默认用 `make_shared`。** 唯一需要用 `shared_ptr(new T)` 的场景：对象很大且会长期被 weak_ptr 观察。
+
+### 4.3 移动比拷贝快得多
+
+```cpp
+auto copied = src;               // 原子自增（有锁总线开销）
+auto moved  = std::move(copied); // 只搬两个指针，**无**原子操作
+```
+
+高并发下原子操作是真实瓶颈。**能 move 的地方别 copy。**
+
+### 4.4 别名构造 —— 持有成员却延长整个对象的寿命
+
+```cpp
+auto parent = std::make_shared<Parent>();
+// ptr 指向成员，但控制块用 parent 的
+std::shared_ptr<std::string> member_ptr(parent, &parent->child);
+```
+
+`parent` 离开作用域后，`Parent` 对象**仍然存活**（`member_ptr` 还持有控制块），通过 `member_ptr` 访问成员完全安全。用于"我只关心这个大对象里的一个字段，但需要保证大对象不被销毁"的场景。
+
+### 4.5 线程安全的边界（极易误解）
+
+- ✅ **安全**：多线程同时拷贝/析构同一个 `shared_ptr`（引用计数是原子的）
+- ❌ **不安全**：多线程同时给同一个 `shared_ptr` **变量**赋值（改的是 ptr 和 ctrl 两个字段，不是原子的）
+- ❌ **不安全**：多线程同时读写它**指向的对象**（`shared_ptr` 只管指针的线程安全，不管数据的）
+
+**一句话：引用计数是原子的，指针本身和被指对象都不是。**
+
+C++20 起有 `std::atomic<std::shared_ptr<T>>` 解决第二种情况。
+
+## 5. weak_ptr
+
+### 5.1 为什么必须 lock()
+
+```cpp
+// 错误！
+if (!w.expired()) w.lock()->f();
+```
+
+多线程下，"检查 expired"和"使用对象"之间，对象可能刚好被销毁。`lock()` 把"检查 + 加引用"做成一个**原子操作**，拿到 `shared_ptr` 后对象就一定活着：
+
+```cpp
+if (auto locked = w.lock()) {
+    locked->f();          // 安全
+}
+```
+
+### 5.2 三个用途
+
+**打破循环引用**（见第 13 章 4.3）：父拥有子用 shared，子指向父用 weak。
+
+**缓存 —— 不阻止对象被回收：**
+
+```cpp
+class ImageCache {
+    std::map<std::string, std::weak_ptr<Image>> cache_;
+public:
+    std::shared_ptr<Image> get(const std::string& key) {
+        if (auto it = cache_.find(key); it != cache_.end()) {
+            if (auto hit = it->second.lock()) return hit;   // 命中
+            cache_.erase(it);                               // 条目已失效，清理
+        }
+        auto obj = std::make_shared<Image>(load(key));
+        cache_[key] = obj;        // 只存 weak，不延长寿命
+        return obj;
+    }
+};
+```
+
+只要外部还在用就命中缓存，没人用了就自动失效 —— 缓存不会因为持有强引用而导致内存无法回收。
+
+**异步回调中安全引用 this**（见下节）。
+
+## 6. enable_shared_from_this 的原理
+
+**问题**：成员函数里怎么拿到"管理自己的那个 shared_ptr"？直接 `shared_ptr<T>(this)` 会创建第二个控制块 → 双重释放。
+
+**原理**：`enable_shared_from_this<T>` 内部有一个 `weak_ptr<T>` 成员。当你用 `shared_ptr` 首次接管这个对象时，`shared_ptr` 的构造函数会通过 SFINAE 检测到 T 继承自它，于是把自己的控制块塞进那个 `weak_ptr` 里。之后 `shared_from_this()` 只是 `weak.lock()`。
+
+```cpp
+// 简化后的实现
+template <class T>
+class enable_shared_from_this {
+    mutable std::weak_ptr<T> weak_this_;     // 由 shared_ptr 构造函数填写
+public:
+    std::shared_ptr<T> shared_from_this() { return std::shared_ptr<T>(weak_this_); }
+    std::weak_ptr<T>   weak_from_this()   { return weak_this_; }    // C++17
+};
+```
+
+**三个必须遵守的前提：**
+
+1. 对象必须**已经**被 `shared_ptr` 管理，否则 `weak_this_` 是空的 → `shared_from_this()` 抛 `std::bad_weak_ptr`
+2. 不能在构造函数里调用（此时 `shared_ptr` 还没接管）
+3. 必须是 public 继承（`shared_ptr` 的构造函数要能看到基类）
+
+### shared_from_this 还是 weak_from_this？
+
+```cpp
+// 用 shared：延长自身寿命直到回调执行完
+void start(Queue& q) {
+    auto self = shared_from_this();
+    q.push([self, this] { doWork(); });     // self 保证对象不死
+}
+
+// 用 weak：对象销毁则跳过回调
+void start_weak(Queue& q) {
+    q.push([weak = weak_from_this()] {
+        if (auto self = weak.lock()) self->doWork();
+        // 否则安全跳过
+    });
+}
+```
+
+**选择标准：**
+
+- 回调**必须**执行（如写入落盘、释放外部资源）→ `shared_from_this`
+- 回调只是"通知"（对象没了就不用通知了）→ `weak_from_this`
+
+网络库里 99% 是后者 —— 连接断了就没必要回调了。但也要注意：用 `shared_from_this` 时，如果回调队列一直不清空，对象就永远不释放（相当于泄漏）。
+
+## 7. 手写实现要点
+
+`ch14_smartptr` 的 Part C 从零实现了三个智能指针并通过多线程压测（4 线程 × 2 万次拷贝，计数正确）。几个关键设计点：
+
+### MyUniquePtr
+
+```cpp
+template <typename T, typename Deleter = DefaultDelete<T>>
+class MyUniquePtr : private Deleter {      // 私有继承 -> 空删除器不占空间
+    T* ptr_ = nullptr;
+public:
+    // 这两行就是「独占」的全部实现
+    MyUniquePtr(const MyUniquePtr&)            = delete;
+    MyUniquePtr& operator=(const MyUniquePtr&) = delete;
+
+    // 移动必须把源置空，漏了就双重释放
+    MyUniquePtr(MyUniquePtr&& o) noexcept : ptr_(o.ptr_) { o.ptr_ = nullptr; }
+
+    void reset(T* p = nullptr) noexcept {
+        T* old = ptr_;
+        ptr_ = p;                 // 先改状态
+        if (old) Deleter::operator()(old);   // 再释放：防止删除器里回访本对象
+    }
+};
+```
+
+用**私有继承**而非成员来持有删除器，是为了获得空基类优化 —— 无状态删除器（无捕获 lambda）就不占空间。
+
+### 控制块与 lock() 的 CAS 循环
+
+`weak_ptr::lock()` 的核心是"原子地只有在计数不为 0 时才 +1"：
+
+```cpp
+bool try_add_strong() noexcept {
+    long cur = strong_.load(std::memory_order_relaxed);
+    while (cur != 0) {
+        if (strong_.compare_exchange_weak(cur, cur + 1,
+                                          std::memory_order_acq_rel,
+                                          std::memory_order_relaxed)) {
+            return true;       // 抢到了，对象保证存活
+        }
+        // CAS 失败：cur 已被更新为最新值，重试
+    }
+    return false;              // 计数已归零，对象没了
+}
+```
+
+**必须用 CAS 循环，不能写成 `if (strong_ != 0) ++strong_;`** —— 那样在判断和自增之间对象可能已被销毁。这是无锁编程最基本的模式。
+
+引用计数递减用 `memory_order_acq_rel`：保证对象的所有写操作在销毁前对本线程可见，且本线程的写操作对最后那个执行销毁的线程可见。
+
+### 手写时踩到的真实坑
+
+```cpp
+// 这个 requires 不是装饰
+template <typename Deleter = DefaultDelete<T>>
+    requires std::is_invocable_v<Deleter&, T*>
+explicit MySharedPtr(T* p, Deleter d = Deleter{});
+```
+
+没有这个约束，`make_shared_ptr` 传进来的 `MyControlBlockInline<T>*`（派生类指针）对这个模板是**精确匹配**（`Deleter = MyControlBlockInline<T>*`），而对"已有控制块"的私有构造函数需要一次派生类到基类的指针转换 —— 精确匹配优先，模板胜出，然后在 `del_(ptr_)` 处报"指针不是可调用对象"。
+
+这就是第 13 章 4.5「万能引用吞掉重载」的真实翻版。最终用 tag 参数解决（`AdoptCtrl{}`），这也是标准库的通用手法 —— `std::piecewise_construct`、`std::in_place`、`std::nothrow` 都是同一个套路。
+
+## 8. 选型决策
+
+```
+需要管理动态分配的对象吗？
+ ├─ 不需要 -> 栈对象 / 成员对象（最快，最安全）
+ └─ 需要 -> 所有权要共享吗？
+            ├─ 不共享（99% 的情况）-> unique_ptr      零开销
+            └─ 共享 -> shared_ptr + 反向引用用 weak_ptr
+
+只是「借用」不涉及所有权 -> 传 T& / const T& / T*（不要传智能指针）
+```
+
+| | 大小 | 运行时开销 |
+|---|---|---|
+| `unique_ptr` | 1 指针 | **0**（全部内联） |
+| `shared_ptr` | 2 指针 | 拷贝/析构各一次原子操作 |
+| `weak_ptr` | 2 指针 | `lock()` 是一次 CAS 循环 |
+
+**三条实践准则：**
+
+1. 永远用 `make_unique` / `make_shared`，不写裸 `new`
+2. 函数参数默认传引用，只在"转移或共享所有权"时传智能指针
+3. **`shared_ptr` 是最后的选择，不是默认选择** —— 它意味着"生命周期由运行时决定"，这本身就让程序更难推理。能用 `unique_ptr` 表达的所有权关系，就不要用 `shared_ptr`
+
+# 第 15 章 · STL 源码剖析
+
+▶ 对应程序：`ch15_stl_source`
+
+读标准库源码最大的障碍不是算法难，而是它为了「通用 + 极致性能 + 异常安全」被层层包裹：满屏 `_Ty`、`__niter_wrap`、`_STD_BEGIN`、`_NODISCARD`、SFINAE。
+
+所以本章的做法是**把每个组件的核心机制单独重写一遍**，去掉所有工程包装，只留下"为什么必须这么设计"的那部分代码，并与标准库对照验证。
+
+## 1. 六大组件与设计哲学
+
+STL 不是"一堆好用的类"，而是一套**正交分解**：
+
+| 组件 | 职责 | 例子 |
+|---|---|---|
+| 容器 Container | 只管"怎么存" | vector / list / map |
+| 算法 Algorithm | 只管"怎么算" | sort / find / accumulate |
+| 迭代器 Iterator | 连接容器与算法 | 容器提供，算法消费 |
+| 仿函数 Functor | 把"行为"参数化 | `less<>` / `plus<>` / lambda |
+| 适配器 Adapter | 改造已有组件的接口 | stack / reverse_iterator |
+| 分配器 Allocator | 把"内存来源"参数化 | allocator / 自定义内存池 |
+
+**为什么要这么拆？** 如果不拆，M 个容器 × N 个算法 = M×N 份实现。拆开之后是 M + N 份：任何算法自动支持任何满足要求的容器。
+
+```cpp
+auto count_gt2 = [](auto first, auto last) {
+    return std::count_if(first, last, [](int x) { return x > 2; });
+};
+// 同一份逻辑，作用于 vector / list / set / C 数组
+```
+
+**代价也很明确，它解释了很多让人困惑的 API：**
+
+- 算法拿不到容器本身，只有迭代器区间 → 所以 `std::remove` **删不掉**元素（第 13 章 2.4）。它根本不知道容器长什么样。
+- `list` 有自己的 `sort()` 成员，因为 `std::sort` 要求随机访问迭代器。
+- 算法用**半开区间** `[first, last)` 而不是闭区间：这样 `last` 可以是"尾后位置"，空区间自然表示成 `first == last`，且元素个数 = `last - first`。
+
+## 2. 迭代器与 iterator_traits
+
+**核心问题**：算法怎么知道"这个迭代器能不能 `+n`""它指向的元素是什么类型"？
+
+答案是靠迭代器自己声明的 5 个关联类型，通过 `iterator_traits` 统一查询：`value_type`、`difference_type`、`pointer`、`reference`、`iterator_category`。
+
+`iterator_traits` 是个**间接层**：既能查询自定义迭代器内部声明的 typedef，也能通过偏特化支持裸指针（裸指针没法在内部声明 typedef）。
+
+### 五种迭代器能力
+
+```
+input_iterator          只读，单向，一次性（读过不能回头）   istream_iterator
+     ↓
+forward_iterator        可读写，单向，可多次遍历            forward_list
+     ↓
+bidirectional_iterator  ++ 和 --                          list / map / set
+     ↓
+random_access_iterator  +n、-n、[]、迭代器相减（O(1) 跳转） vector / deque / 数组
+     ↓
+contiguous_iterator     元素在内存里物理连续（C++20 新增）  vector / array / span
+```
+
+分这么细是为了让算法**据此选择不同实现**：
+
+| 操作 | 随机访问 | 其它 |
+|---|---|---|
+| `std::advance(it, 1000)` | `it += 1000`，一步到位 | 循环 `++it` 1000 次 |
+| `std::distance(a, b)` | `b - a`，O(1) | 边走边数，O(n) |
+
+### 编译期分派的三代写法
+
+**第一代：tag dispatch（C++11/14）** —— 用"重载 + 空标签类型"在编译期选择实现，零运行时开销：
+
+```cpp
+template <typename It, typename D>
+void advance_impl(It& it, D n, std::random_access_iterator_tag) { it += n; }
+template <typename It, typename D>
+void advance_impl(It& it, D n, std::bidirectional_iterator_tag) { while (n--) ++it; }
+
+template <typename It, typename D>
+void advance(It& it, D n) {
+    advance_impl(it, n, typename std::iterator_traits<It>::iterator_category{});
+}
+```
+
+**第二代：if constexpr（C++17）** —— 更直观：
+
+```cpp
+template <typename It, typename D>
+void advance17(It& it, D n) {
+    using Cat = typename std::iterator_traits<It>::iterator_category;
+    if constexpr (std::is_base_of_v<std::random_access_iterator_tag, Cat>) {
+        it += n;
+    } else {
+        while (n-- > 0) ++it;
+    }
+}
+```
+
+关键：**未选中的分支不参与编译**。所以 `it += n` 出现在这里也不会让 list 迭代器编译失败 —— 这正是 `if constexpr` 取代 tag dispatch 的原因。
+
+**第三代：concepts（C++20）** —— 报错信息最友好，概念更特化者优先：
+
+```cpp
+template <std::random_access_iterator It> void advance20(It& it, std::ptrdiff_t n) { it += n; }
+template <std::input_iterator It>         void advance20(It& it, std::ptrdiff_t n) { while (n-- > 0) ++it; }
+```
+
+## 3. allocator 与内存池
+
+**为什么 STL 要把内存分配抽象成 allocator，而不是直接 new？**
+
+**理由 1：分离「分配内存」与「构造对象」。**
+
+```cpp
+std::allocator<std::string> alloc;
+std::string* raw = alloc.allocate(3);      // 只要内存，**不构造** string 对象
+std::construct_at(raw, "第一个");           // C++20；等价于 placement new
+std::destroy_at(raw);                       // 调析构，不释放内存
+alloc.deallocate(raw, 3);                   // 还内存
+```
+
+这就是 `vector::reserve(1000)` 不会构造 1000 个对象的原因。如果用 `new T[1000]`，就会强制调用 1000 次构造函数。
+
+**理由 2：可替换内存来源** —— 共享内存、GPU 显存、栈上 buffer、内存池。
+
+**理由 3：小对象频繁分配时，malloc 的开销（加锁 + 元数据 + 碎片）占比极高。**
+
+### 内存池的核心技巧
+
+SGI STL 的经典方案是「二级分配器」：>128 字节直接 malloc；≤128 字节按 8 字节对齐分成 16 条自由链表，从内存池切块。
+
+本章实现的 `PoolAllocator` 展示了最关键的技巧：
+
+```cpp
+union Slot {
+    Slot* next;                              // 空闲时：链表节点
+    alignas(T) unsigned char storage[sizeof(T)];   // 占用时：对象
+};
+```
+
+**slot 与对象共用同一块内存** —— 链表指针不占额外空间。分配 = 从链表头摘一个（O(1)，无锁无系统调用），释放 = 挂回链表头。
+
+实测给 `std::list<int>` 换上这个分配器，插入 200 个节点只触发了 **4 次**真正的系统调用（每 chunk 64 个 slot）。
+
+### C++17 起用 PMR 更好
+
+```cpp
+char buf[8192];
+std::pmr::monotonic_buffer_resource pool{buf, sizeof buf};
+std::pmr::vector<int> v{&pool};      // 直接在栈 buffer 上分配，零系统调用
+```
+
+PMR 用**运行时多态**替代模板参数，所以 `pmr::vector<int>` 是同一个类型，不会因为分配器不同而类型不兼容 —— 这是老式 allocator 的最大痛点。
+
+## 4. vector
+
+### 4.1 三个指针就是全部状态
+
+```
+begin_          end_              cap_
+  ↓               ↓                 ↓
+┌───┬───┬───┬───┬───┬───┬───┬───┐
+│ 1 │ 2 │ 3 │ 4 │   │   │   │   │
+└───┴───┴───┴───┴───┴───┴───┴───┘
+|<---- size() 4 ---->|
+|<---------- capacity() 8 -------->|
+```
+
+`size() = end_ - begin_`，`capacity() = cap_ - begin_`。
+
+### 4.2 为什么扩容是乘法而不是加法
+
+- 每次 **+k**：插入 n 个元素总搬移量 = k + 2k + … = O(n²/k)，**二次复杂度**
+- 每次 **×2**：搬移量 = 1 + 2 + 4 + … + n < 2n，**均摊 O(1)**
+
+这就是"均摊常数时间"的来源。实测扩容轨迹：`1 2 4 8 16 32 64` —— 33 次 `push_back` 只触发 6 次重新分配。
+
+**为什么 MSVC 用 1.5 倍而 GCC/Clang 用 2 倍？**
+
+- 2 倍：新块永远比"之前所有释放块的总和"还大（1+2+4 < 8），**永远无法复用**之前释放的空间，堆碎片更多
+- 1.5 倍：增长几次后新块可以放进之前释放的空隙里（内存复用性更好），但搬移次数更多
+
+两种都是合理取舍，没有绝对优劣。
+
+### 4.3 reserve 里藏着异常安全的全部要点
+
+```cpp
+void reserve(size_type new_cap) {
+    if (new_cap <= capacity()) return;
+
+    // 1) 先在新内存上完成所有工作，**旧数据保持完好**
+    T* new_begin = alloc(new_cap);
+    T* new_end   = new_begin;
+    try {
+        for (T* p = begin_; p != end_; ++p) {
+            if constexpr (std::is_nothrow_move_constructible_v<T>) {
+                construct(new_end, std::move(*p));
+            } else {
+                construct(new_end, *p);          // 拷贝，抛异常可回滚
+            }
+            ++new_end;
+        }
+    } catch (...) {
+        // 2) 出错：销毁新内存上已构造的部分，还掉新内存，旧状态一点没动
+        destroy_range(new_begin, new_end);
+        dealloc(new_begin, new_cap);
+        throw;                                    // 调用方看到的是「什么都没发生」
+    }
+    // 3) 全部成功，才切换到新内存
+    ...
+}
+```
+
+### 4.4 移动构造必须 noexcept —— 实测的代价
+
+那个 `if constexpr` 不是优化，是**正确性要求**：
+
+如果移动构造可能抛异常，搬到第 5 个元素时抛了，前 4 个已经被搬空，旧内存里是"被移动过"的残骸，**无法回滚** —— vector 就废了。拷贝失败则可以直接丢弃新内存，旧数据完好，能给出**强异常保证**。
+
+这就是"为什么移动构造函数一定要标 noexcept"的真正原因。实测（用探针类型统计）：
+
+| 移动构造是否 noexcept | 扩容时的移动次数 | 拷贝次数 |
+|---|---|---|
+| 是 | 7 | 0 |
+| **否** | **0** | **7** |
+
+**少写一个 `noexcept`，vector 扩容就退化成全量深拷贝。**
+
+### 4.5 reserve 与 emplace_back 的实测收益
+
+| 操作 | 构造 | 拷贝 | 移动 | 析构 |
+|---|---|---|---|---|
+| 8 次 `emplace_back`，不 reserve | 8 | 0 | **7** | 15 |
+| 先 `reserve(8)` 再插入 | 8 | 0 | **0** | 8 |
+| `push_back(Probe{1})` | 1 | 0 | **1** | 2 |
+| `emplace_back(1)` | 1 | 0 | **0** | 1 |
+
+`push_back(T{args})` 要先构造临时对象再移动进容器；`emplace_back(args)` 直接在目标位置构造，省掉一次移动和一次析构。
+
+**已知元素个数就一定要 reserve** —— 这是最廉价的优化。Release 实测：20 万次 `push_back`，加 reserve 后快 **5~6 倍**。
+
+## 5. string 与 SSO
+
+**问题**：`std::string("hi")` 如果总是堆分配，那"短字符串满天飞"的程序（键名、标签、路径片段）就会被 malloc 拖死。
+
+**方案**：SSO (Small String Optimization)。用一个 union 把两种布局叠在一起：
+
+```
+长字符串模式（heap）：            短字符串模式（栈内联）：
+┌──────────────────┐             ┌──────────────────┐
+│ char* data       │ 8 字节       │ char buf[23]     │ 直接存字符
+│ size_t size      │ 8 字节       │                  │
+│ size_t capacity  │ 8 字节       │ uint8_t 标志+长度 │ 最高位当模式标志
+└──────────────────┘ = 24         └──────────────────┘ = 24
+```
+
+用"本来就要占的那几十个字节"换掉了一次堆分配。
+
+各实现的差异：
+
+| 实现 | `sizeof(std::string)` | SSO 阈值 |
+|---|---|---|
+| libc++ | 24 | 22 |
+| libstdc++ | 32 | 15 |
+| MSVC (Release) | 32 | 15 |
+| MSVC (Debug) | 40 | 15 |
+
+MSVC Debug 多出的 8 字节是迭代器调试信息（`_ITERATOR_DEBUG_LEVEL=2`），不是 SSO 缓冲区。
+
+**代价**：string 的移动**不是**纯指针搬运 —— 短字符串模式下数据就在对象内部，没有指针可偷，只能逐字节拷贝：
+
+```cpp
+MyString(MyString&& o) noexcept {
+    if (o.is_heap()) {
+        heap_ = o.heap_;        // 偷指针
+        o.set_small_size(0);    // 源变成空短串
+    } else {
+        small_ = o.small_;      // 只能拷贝
+    }
+}
+```
+
+**实用推论：**
+
+- 短字符串当值传递/返回是廉价的，别为此改用 `const char*`
+- `reserve` 对 string 同样有效（大量 `+=` 时）
+- `string_view` 的价值主要在**长**字符串的子串上（短的本来就不分配）
+
+## 6. list 与哨兵节点
+
+双向链表的实现难点全在**边界处理**：插入第一个元素、删除最后一个元素、空链表……如果 head/tail 是裸指针，每个操作都要写一堆 `if (head == nullptr)`。
+
+STL 的解法是**哨兵节点**（sentinel / dummy head）—— 一个不存数据的节点，让链表永远成环：
+
+```
+     ┌──────────────────────────────────────┐
+     ↓                                      │
+┌─────────┐    ┌───────┐    ┌───────┐      │
+│ 哨兵    │───►│  1    │───►│  2    │──────┘
+│ (end()) │◄───│       │◄───│       │
+└─────────┘    └───────┘    └───────┘
+     ↑
+   begin() = 哨兵->next
+```
+
+三个直接好处：
+
+1. 空链表也是合法的环（哨兵自己指自己），**没有 nullptr 分支**
+2. `end()` 就是哨兵本身，天然满足"end 是尾后位置"且可以 `--end()`
+3. 插入/删除只需改 4 个指针，永远不用判断"是否是头/尾"
+
+```cpp
+// 所有插入都归结到这一个函数 —— 数一下，没有任何 if
+iterator emplace(iterator pos, Args&&... args) {
+    Node* node = new Node(std::forward<Args>(args)...);
+    NodeBase* next = pos.p_;
+    NodeBase* prev = next->prev;
+    node->prev = prev;  node->next = next;
+    prev->next = node;  next->prev = node;
+    ++size_;
+    return iterator(node);
+}
+```
+
+注意哨兵用的是 `NodeBase`（只有指针）而不是 `Node`（含 T）—— 因为 T 可能没有默认构造函数，而且哨兵不需要存值。
+
+### splice —— list 的杀手级操作
+
+```cpp
+a.splice(a.begin(), b);     // O(1) 把 b 整体接过来，只改 4 个指针
+```
+
+100 万个元素也是 O(1)。vector 做不到（必须逐个搬）。
+
+### 但 list 为什么这么慢？
+
+每个节点独立分配 → 内存分散 → 缓存不友好。Release 实测遍历 20 万个 int：
+
+| 容器 | 耗时 | 相对 vector |
+|---|---|---|
+| vector | 14 μs | 1× |
+| deque | 100 μs | ~7× |
+| list | 324 μs | **~23×** |
+
+原因：vector 元素连续，一次缓存行（64 字节）加载 16 个 int；list 几乎每次访问都是缓存未命中。
+
+**list 只在「频繁在中间插删 + 需要迭代器长期有效 + splice」时才划算。**
+
+## 7. 红黑树（map / set 的底层）
+
+**为什么不用普通二叉搜索树？** 有序插入会退化成链表：插入 1,2,3,4,5 → 树高 = n，查找变 O(n)。
+
+红黑树用 5 条不变式把树高约束在 O(log n)：
+
+1. 每个节点是红色或黑色
+2. 根节点是黑色
+3. 所有叶子（NIL）是黑色
+4. **红色节点的两个子节点必须是黑色**（不能有连续红节点）
+5. **从任一节点到其所有后代 NIL 的路径包含相同数目的黑节点**
+
+规则 4 + 5 共同保证：最长路径 ≤ 2 × 最短路径，于是树高 ≤ 2·log₂(n+1)。
+
+实测（本章实现带不变式校验）：
+
+| 输入 | 行数 | 实际树高 | 理论下界 | 红黑树上界 | 普通 BST |
+|---|---|---|---|---|---|
+| 顺序插入（最坏输入） | 1000 | 17 | 9 | 19 | **1000** |
+| 随机插入 | 10000 | 16 | 13 | 26 | ~30 |
+
+### 插入的三种修复情形
+
+新节点总是红色（这样不破坏规则 5，只可能破坏规则 4）。只在"父节点也是红色"时需要修复：
+
+**情形 1：叔叔 U 是红色** → 纯变色，问题上移两层
+
+```
+     G(黑)                  G(红)  <- 继续向上检查
+    /    \                 /    \
+  P(红)  U(红)   ====>   P(黑)  U(黑)
+  /                      /
+N(红)                  N(红)
+```
+
+**情形 2：叔叔黑，N 是「内侧」孙子** → 先旋转成情形 3
+
+```
+     G(黑)                    G(黑)
+    /    \                   /    \
+  P(红)  U(黑)   ====>     N(红)  U(黑)      左旋 P
+    \                      /
+    N(红)                P(红)
+```
+
+**情形 3：叔叔黑，N 是「外侧」孙子** → 旋转 + 变色，修复完成
+
+```
+     G(黑)                    P(黑)
+    /    \                   /    \
+  P(红)  U(黑)   ====>     N(红)  G(红)      右旋 G
+  /                                  \
+N(红)                                U(黑)
+```
+
+**为什么用红黑树而不是 AVL 树？** AVL 更平衡（查找略快），但插入/删除需要更多旋转来维持严格平衡。红黑树的"近似平衡"让修改操作的旋转次数是 O(1) 均摊，在"读写混合"场景总体更快。
+
+**为什么删除比插入难得多？** 插入的新节点是红色，最多只破坏规则 4，情形只有 3 种。删除黑节点会破坏规则 5（黑高不等），要"借"一个黑节点回来，情形有 4 种且需要区分兄弟节点的孩子颜色，代码量是插入的 2~3 倍。这也是为什么很多人手写红黑树只写插入（本章也是）。
+
+### map/set 的实际后果
+
+- 节点独立分配 → 缓存不友好，实测比 `unordered_map` 慢 **4~5 倍**
+- 但有序、迭代器稳定（插删不失效）、支持 `lower_bound` 范围查询
+- 小数据量（< 几十个）时 sorted vector 或 `flat_map`（C++23）更快
+
+## 8. 哈希表（unordered_map 的底层）
+
+结构：**桶数组 + 链地址法**（separate chaining）
+
+```
+buckets_
+┌───┐
+│ 0 │──► ("cat",1) ──► ("act",9) ──► nullptr     哈希冲突时挂同一条链
+├───┤
+│ 1 │──► nullptr
+├───┤
+│ 2 │──► ("dog",2) ──► nullptr
+└───┘
+```
+
+### 三个关键设计决策
+
+**桶数怎么选？** libstdc++ / MSVC 用**质数**（13, 29, 59, 127…），因为取模质数能更好地打散有规律的哈希值。有些实现用 2 的幂（可以用位与代替取模，更快），代价是要求哈希函数质量更高。
+
+**负载因子** = 元素数 / 桶数，默认上限 1.0。超过就 rehash（桶数翻倍并重新分配所有元素）。实测桶数变化：`13 → 29 → 59 → 127 → 257 → 541`。
+
+**缓存哈希值。** 每个节点存一份 `hash`：
+
+- rehash 时不用重新调用哈希函数
+- 查找时先比 hash（整数比较）再比 key（可能是字符串比较），快得多
+
+**为什么 rehash 会让迭代器失效但引用/指针不失效？** 因为 rehash 只是把节点重新挂到不同的桶上，**节点本身没有移动**。迭代器要靠桶索引来遍历，桶变了就失效；但指向节点里 value 的指针和引用依然有效。
+
+### 哈希函数质量的影响（实测）
+
+| 哈希函数 | 链长分布 | 最长链 |
+|---|---|---|
+| 恒返回 42（坏） | 全部 100 个元素挂一条链 | **100** |
+| `std::hash` | 0→326桶 1→149桶 2→51桶 3→11桶 4→4桶 | 4 |
+
+坏哈希让查找退化成 O(n)。
+
+### 自定义类型做键
+
+```cpp
+struct Point { int x, y; bool operator==(const Point&) const = default; };
+
+template <> struct std::hash<Point> {
+    size_t operator()(const Point& p) const noexcept {
+        size_t h = std::hash<int>{}(p.x);
+        // 组合哈希：别用简单 XOR（(1,2) 和 (2,1) 会撞）
+        h ^= std::hash<int>{}(p.y) + 0x9e3779b97f4a7c15ULL + (h << 6) + (h >> 2);
+        return h;
+    }
+};
+```
+
+那个 `0x9e3779b9` 是黄金比例的定点表示，`boost::hash_combine` 就用它，作用是让每一位的影响均匀扩散到整个哈希值。
+
+## 9. deque 的分段连续
+
+deque 既要"两端 O(1) 插删"又要"O(1) 随机访问"，所以它不是单块连续内存：
+
+```
+map_（中控器，本身是一个 T** 数组）
+┌────┬────┬────┬────┐
+│ p0 │ p1 │ p2 │ p3 │
+└─┬──┴─┬──┴─┬──┴─┬──┘
+  ↓    ↓    ↓    ↓
+[缓冲区][缓冲区][缓冲区][缓冲区]     每块固定 512 字节 / sizeof(T) 个元素
+   ↑                        ↑
+ start                     finish
+```
+
+- `push_front` → 在首块前面留的空位里放，满了就新分配一块挂到中控器前端
+- `operator[i]` → 先算 i 落在第几块（`i / 块大小`），再算块内偏移（`i % 块大小`）—— 两次寻址，所以比 vector 的 `[]` 慢，但仍是 O(1)
+
+迭代器要存 4 个指针（当前元素、当前块首、当前块尾、指向中控器的位置），所以 deque 的迭代器比 vector 的裸指针"重"得多。
+
+**重要细节**：deque 的 `push_back`/`push_front` **不会**使引用和指针失效（已有的块不动），但**会**使迭代器失效（中控器可能重新分配）。这和 vector"全都失效"、list"全都不失效"形成三档差异。
+
+## 10. std::sort = 内省排序（introsort）
+
+三种排序算法各有致命弱点，introsort 把它们组合起来互相补位：
+
+| 算法 | 优点 | 致命弱点 |
+|---|---|---|
+| 快速排序 | 平均最快（缓存友好、常数小） | 最坏 O(n²) |
+| 堆排序 | 稳定 O(n log n) 保底 | 常数大、缓存不友好 |
+| 插入排序 | 小数据和"几乎有序"时最快 | 一般情况 O(n²) |
+
+**introsort 的策略：**
+
+1. 主体用快排（**三点取中**选 pivot：取首、中、尾的中位数，抗有序输入）
+2. 递归深度超过 `2·log₂(n)` → 判定快排退化，切**堆排序**保底
+3. 区间缩小到 ≤ 16 个元素 → 停止递归，最后统一做一次**插入排序**
+
+于是最坏情况也是 O(n log n)，平均情况保持快排的速度。这个算法由 David Musser 在 1997 年提出，此后成为所有 STL 实现的标准做法。
+
+还有一个细节：递归处理较小的一半，循环处理较大的一半 → 栈深度 O(log n) 而不是 O(n)。
+
+### 相关算法的选择
+
+| 算法 | 特性 | 复杂度 |
+|---|---|---|
+| `std::sort` | 不稳定，原地。**默认选它** | O(n log n) |
+| `std::stable_sort` | 稳定（相等元素保持原序），归并排序 | O(n log n)，需 O(n) 额外内存 |
+| `std::partial_sort` | 只要前 k 个 → 堆排序 | O(n log k) |
+| `std::nth_element` | 只要第 k 个就位 → 快速选择 | 平均 O(n) |
+
+**"只要前 10 名"千万别 sort 全部再取前 10** —— 用 `partial_sort`。
+
+## 11. 性能实测与容器选型
+
+### 选型决策树
+
+```
+需要键值查找?
+ ├─ 是 → 需要有序遍历/范围查询?
+ │        ├─ 是 → map / set (红黑树, O(log n), 迭代器稳定)
+ │        └─ 否 → unordered_map / unordered_set (哈希, O(1) 均摊)
+ │                 元素少(<32)且频繁遍历? → flat_map (C++23) 或 sorted vector
+ └─ 否 → 大小编译期已知?
+          ├─ 是 → std::array (栈上, 零开销)
+          └─ 否 → 只在尾部增删?
+                   ├─ 是 → std::vector   ← 默认就选这个
+                   └─ 否 → 两端都增删?
+                            ├─ 是 → std::deque
+                            └─ 否 → 中间频繁插删且需要稳定迭代器?
+                                     ├─ 是 → std::list
+                                     └─ 否 → 还是 vector（实测通常更快）
+```
+
+### Release 实测数据（20 万 int / 10 万字符串键，best-of-5）
+
+| 操作 | 耗时 |
+|---|---|
+| vector push_back | 678 μs |
+| vector push_back + **reserve** | **132 μs**（快 5 倍） |
+| deque push_back | 2742 μs |
+| list push_back | 8996 μs |
+| vector 遍历 | 14 μs |
+| deque 遍历 | 100 μs |
+| list 遍历 | 324 μs（**慢 23 倍**） |
+| map 查找 | 15125 μs |
+| unordered_map 查找 | **3389 μs**（快 4.5 倍） |
+
+### 一个诚实的反例
+
+`unordered_map` 的 `reserve` 在 MSVC 上**没有变快，反而稳定慢 2.7 倍**（12752 μs vs 4717 μs）。
+
+原因：MSVC 的 `unordered_map` 每个桶存两个迭代器（比 libstdc++ 的单指针桶重一倍），`reserve` 会一次性分配很大的桶数组，这笔开销抵消了省下的 rehash。libstdc++ 上则是明显收益。
+
+**结论：`reserve` 对 vector 是无脑收益；对 unordered_map 要按你用的标准库实测，别照抄结论（包括本文的结论）。**
+
+### 关于测量方法
+
+本章的基准测试取**多次运行的最小值**，不是单次也不是平均值。理由：操作系统调度、其它进程抢 CPU、缓存冷启动只会让某次运行**变慢**，不可能让它变快，所以最小值最接近"这段代码本身的成本"。
+
+用平均值的话，一次调度抖动就能让结论反过来 —— 开发本章时就遇到过：同一份代码两次运行，快慢结论正好相反。Google Benchmark 等基准库都用最小值/中位数。
+
+**另外注意 Debug 构建的数字完全不可用作基准。** MSVC 的 Debug 开启迭代器调试检查（`_ITERATOR_DEBUG_LEVEL=2`），标准库容器每次访问都带边界校验，绝对耗时放大 5~30 倍：
+
+```bash
+cmake --build build --config Release
+build\bin\Release\ch15_stl_source.exe
+```
+
+## 本章要点
+
+1. 容器/算法/迭代器三者解耦，代价是 `std::remove` 删不掉元素
+2. `iterator_traits` + tag dispatch 是编译期分派的经典实现，C++17 用 `if constexpr`、C++20 用 concepts 取代它
+3. allocator 把"分配内存"和"构造对象"分开 → `reserve` 才能不构造对象
+4. vector 2 倍扩容 = 均摊 O(1)；**移动构造必须 noexcept，否则扩容退化成全量深拷贝**
+5. string 用 union 实现 SSO，短字符串零堆分配
+6. list 的哨兵节点消灭了所有边界判断
+7. 红黑树用 5 条不变式把树高压到 2·log₂n，插入 3 种修复情形
+8. 哈希表 = 桶数组 + 链地址法 + 质数桶数 + 缓存哈希值；rehash 使迭代器失效但引用不失效
+9. `std::sort` = 快排 + 堆排保底 + 插排收尾（introsort）
+10. **缓存局部性常常比算法复杂度更决定实际性能**
+
+# 第 16 章 · Reactor 完整实现
+
+▶ 对应程序：`ch16_reactor_selftest`（自动化验证）、`ch16_echo_server`、`ch16_chat_server`
+
+▶ 源码：`src/ch16_reactor/reactor/reactor.h` + `reactor.cpp`（约 1100 行，去掉注释约 600 行）
+
+这是全书的技术收口：把第 8~12 章的网络知识、第 13 章的坑、第 14 章的智能指针全部用上，写一个能跑的小型网络库。结构对照 muduo（陈硕）与 libevent 的设计。
+
+## 1. 为什么需要 Reactor —— 三种服务器模型
+
+### 模型 1：一连接一线程
+
+```cpp
+while (true) {
+    int conn = accept(listen_fd, ...);
+    std::thread([conn]{ 处理这个连接直到断开; }).detach();
+}
+```
+
+- **优点**：代码直白，每个连接的逻辑是同步的，好写好读
+- **缺点**：1 万个连接 = 1 万个线程。每个线程默认 1~8 MB 栈，光栈就要几十 GB；内核调度器在上万个线程间切换，上下文切换开销吃掉大部分 CPU
+
+这就是著名的 **C10K 问题**。
+
+### 模型 2：线程池 + 阻塞 IO
+
+连接数不再等于线程数，但一个线程被一个"正在等数据"的连接占住，慢连接会耗尽线程池。仍然扛不住高并发长连接。
+
+### 模型 3：Reactor
+
+核心思路：**别让线程等 IO，让线程等「哪些 IO 已经就绪」。**
+
+```
+┌──────────────────────────────────────────────────────┐
+│                    EventLoop                         │
+│                                                      │
+│   ┌──────────┐   1. poller_->poll(timeout)           │
+│   │  Poller  │      阻塞在这里，等内核通知             │
+│   │ epoll /  │      (一个线程同时监视上万个 fd)       │
+│   │ poll /   │                                       │
+│   │ select   │   2. 返回「就绪的 Channel 列表」       │
+│   └────┬─────┘                                       │
+│        ▼                                             │
+│   ┌──────────────────────────────────┐               │
+│   │ for (Channel* ch : activeList)   │  3. 分发       │
+│   │     ch->handleEvent();           │               │
+│   └──────────────────────────────────┘               │
+│        ▼  回调是**非阻塞**的，处理完立刻返回循环       │
+│   onMessage / onConnection / onWriteComplete         │
+└──────────────────────────────────────────────────────┘
+```
+
+一个线程 + 一个 epoll 就能撑数万连接，因为线程从不空等。
+
+**代价**：所有回调必须非阻塞。回调里做一次同步数据库查询，整个循环就卡住了 —— 这是 Reactor 编程最重要的纪律。
+
+## 2. 类结构
+
+自底向上：
+
+| 类 | 职责 |
+|---|---|
+| `Buffer` | 应用层收发缓冲区（非阻塞 IO 的必需品） |
+| `Poller` | 对 epoll / poll / select 的抽象 |
+| `EpollPoller` / `PollPoller` | Linux / 通用实现 |
+| `Channel` | 一个 fd + 关心的事件 + 各类回调（**不拥有** fd） |
+| `EventLoop` | 事件循环，one loop per thread |
+| `EventLoopThread(Pool)` | 从属 Reactor 池（round-robin 分配连接） |
+| `TcpConnection` | 一条 TCP 连接的完整生命周期 |
+| `Acceptor` | 专门处理监听 fd 的 accept |
+| `TcpServer` | 把上面全部组装起来的门面 |
+
+用户只需要和 `TcpServer` 打交道 —— 一个完整的回显服务器就这么点代码：
+
+```cpp
+EventLoop loop;
+TcpServer server(&loop, netc::make_addr_v4(nullptr, 9000), "Echo");
+server.setThreadNum(4);
+server.setMessageCallback([](const TcpConnectionPtr& conn, Buffer* buf) {
+    conn->send(buf->retrieveAllAsString());
+});
+server.start();
+loop.loop();
+```
+
+## 3. 主从 Reactor
+
+```
+     ┌────────────────────┐
+     │   主 Reactor       │   只负责 accept，不做任何 IO
+     │   (mainLoop)       │
+     │   Acceptor         │
+     └─────────┬──────────┘
+               │ 新连接按 round-robin 分给从 Reactor
+     ┌─────────┼─────────┬─────────────┐
+     ▼         ▼         ▼             ▼
+┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐
+│subLoop 0│ │subLoop 1│ │subLoop 2│ │subLoop 3│   每个跑在独立线程
+│ N 个连接│ │ N 个连接│ │ N 个连接│ │ N 个连接│
+└─────────┘ └─────────┘ └─────────┘ └─────────┘
+```
+
+**关键约束：一个连接只属于一个 EventLoop，永不跨线程迁移。**
+
+于是同一连接的所有回调都在同一线程串行执行 —— 连接内部的状态（Buffer、协议解析进度）**根本不需要加锁**。
+
+这是 Reactor 相比"共享状态 + 加锁"模型最大的工程优势：不是性能，而是**正确性容易保证**。
+
+## 4. 应用层 Buffer —— 非阻塞 IO 的必需品
+
+### 4.1 为什么必须有
+
+**读方向**：非阻塞 `read` 一次可能只返回半个消息。比如协议是"4 字节长度 + N 字节内容"，`read` 返回 3 字节 —— 你连长度都读不完整。必须把这 3 字节**存起来**，等下次可读事件再拼。这就是粘包/半包处理的本质。
+
+**写方向**：非阻塞 `write` 一次可能只写进去一部分（内核发送缓冲区满了）。剩下的必须存起来，然后**注册可写事件**，等内核腾出空间再继续写。
+
+自测实测：发送 2 MB 数据，服务端触发了 **32 次**可读事件，单次 Buffer 峰值 65 KB。一条消息被拆成这么多次 —— 没有 Buffer 就必然出错。
+
+### 4.2 内存布局
+
+```
++-------------------+------------------+------------------+
+| prependable       |     readable     |     writable     |
++-------------------+------------------+------------------+
+0      <=      readerIndex   <=   writerIndex    <=     size()
+```
+
+`prependable` 区（预留 8 字节，刚好放一个 int64 长度字段）的用途：想在消息前面加长度字段时，不用挪动整个消息，直接往前写 4 字节：
+
+```cpp
+Buffer out;
+out.append(body);                            // 先写载荷
+int32_t be = htonl((uint32_t)body.size());
+out.prepend(&be, sizeof(be));                // 最后往前面塞长度，零搬移
+```
+
+对比朴素做法"先算长度、先写头、再写体"，`prepend` 让你可以**写完才知道多长** —— 序列化嵌套结构时非常有用。
+
+### 4.3 makeSpace 的两种策略
+
+```cpp
+void makeSpace(size_t len) {
+    if (writableBytes() + prependableBytes() < len + kCheapPrepend) {
+        buf_.resize(writerIndex_ + len);         // 策略 A：总空间不够 -> 扩容
+    } else {
+        // 策略 B：总空间够，只是数据「漂」到后面了 -> 搬回前面
+        // 这避免了「明明有空间却反复 resize」导致的内存无限增长
+        size_t readable = readableBytes();
+        std::copy(begin() + readerIndex_, begin() + writerIndex_, begin() + kCheapPrepend);
+        readerIndex_ = kCheapPrepend;
+        writerIndex_ = readerIndex_ + readable;
+    }
+}
+```
+
+典型触发场景：不断 append 小消息 + retrieve，`readerIndex` 一路往后跑。
+
+### 4.4 readFd —— 最值得学的函数
+
+**问题**：Buffer 该开多大？
+
+- 开小了：一次 read 读不完，多次系统调用（系统调用有成本）
+- 开大了：每个连接一个 64KB Buffer，1 万连接就是 640 MB 常驻内存
+
+**解法**：栈上临时缓冲 + **分散读**（scatter read）
+
+准备两块缓冲区交给内核：第 1 块是 Buffer 现有的可写空间（可能很小），第 2 块是栈上 64KB 临时数组。内核先填满第 1 块再填第 2 块，一次系统调用最多读 64KB+。
+
+```cpp
+long Buffer::readFd(socket_t fd, int* savedErrno) {
+    char   extrabuf[65536];              // 栈上，函数返回就没了
+    size_t writable = writableBytes();
+
+    struct iovec vec[2];
+    vec[0].iov_base = beginWrite();   vec[0].iov_len = writable;
+    vec[1].iov_base = extrabuf;       vec[1].iov_len = sizeof(extrabuf);
+    long n = ::readv(fd, vec, (writable < sizeof(extrabuf)) ? 2 : 1);
+
+    if (n <= writable) {
+        hasWritten(n);                                    // 全装进 Buffer 了
+    } else {
+        writerIndex_ = buf_.size();
+        append(extrabuf, n - writable);                   // 溢出部分才触发扩容
+    }
+    return n;
+}
+```
+
+于是：**连接空闲时 Buffer 一直很小（省内存），突发大流量时一次系统调用就能全部读走（省 CPU）。**
+
+POSIX 用 `readv`，Windows 用 `WSARecv` —— 都是"分散/聚集 IO"的标准接口。
+
+## 5. Channel 与 tie() —— 生命周期的坑
+
+`Channel` 把"一个 fd""它关心哪些事件""事件发生时调什么函数"绑在一起。**它不拥有 fd** —— fd 的关闭由持有者负责（`TcpConnection` 持有连接 fd，`Acceptor` 持有监听 fd）。
+
+### 为什么需要 tie()
+
+考虑这个执行序列：
+
+1. 可读事件触发，`Channel::handleEvent()` 开始执行
+2. 回调里发现对端关闭，调用 `TcpConnection::handleClose()`
+3. `handleClose` 把 `TcpConnection` 从 `TcpServer` 的 map 里移除
+4. `TcpConnection` 的引用计数归零，**对象析构**
+5. 但 `Channel` 是 `TcpConnection` 的成员！`Channel` 也被析构了
+6. `handleEvent()` 还在执行，继续访问已析构的 `this` → **崩溃**
+
+解法：`handleEvent` 开头把持有者的 `weak_ptr` 提升成 `shared_ptr` 并持有到函数结束：
+
+```cpp
+void Channel::handleEvent() {
+    if (tied_) {
+        std::shared_ptr<void> guard = tie_.lock();
+        if (!guard) return;        // 持有者已销毁 —— 这是「迟到」的事件，丢弃
+        // guard 在本作用域末尾才释放，所以对象活到回调结束
+        ...分发事件...
+    }
+}
+```
+
+绑定发生在连接建立时：
+
+```cpp
+void TcpConnection::connectEstablished() {
+    channel_->tie(shared_from_this());        // 第 14 章的 enable_shared_from_this
+    channel_->enableReading();
+}
+```
+
+**这就是第 13 章坑 22 和第 14 章 enable_shared_from_this 在真实项目里的样子。** 不是学术练习 —— 少了它，服务器在高并发断连时会随机崩溃，而且极难复现。
+
+## 6. Poller —— 三种多路复用机制
+
+| 机制 | 缺陷 | 复杂度 |
+|---|---|---|
+| `select` | ① `FD_SETSIZE` 硬上限（Linux 1024，Windows 64）② 每次调用都要把整个 fd 集合从用户态拷到内核态 ③ 返回后要遍历所有 fd | O(总连接数) |
+| `poll` | 用数组代替位图，去掉了 `FD_SETSIZE` 限制，但②③依旧 | O(总连接数) |
+| `epoll` | 解决了根本问题 | **O(就绪连接数)** |
+
+epoll 的三个关键改进：
+
+1. `epoll_ctl` 注册一次，内核**持久保存**（不再每次拷贝）
+2. 内核维护一个**就绪队列**，`epoll_wait` 只返回就绪的 fd
+3. `epoll_event.data.ptr` 可以直接存 `Channel*` —— 返回时 O(1) 拿到对象，不需要像 poll 那样再查一次 map
+
+10000 个连接、其中 10 个活跃时：select/poll 要检查 10000 个，epoll 只返回 10 个。**这就是 epoll 能撑 C10K/C100K 的原因。**
+
+（BSD/macOS 的对应物是 kqueue，Windows 是 IOCP —— IOCP 是"完成端口"模型，语义上属于 **Proactor** 而非 Reactor。）
+
+### LT vs ET
+
+**LT（Level Triggered，水平触发，默认）**：只要缓冲区里**还有**数据没读完，就一直通知你。
+
+- 好处：不会漏事件，一次没读完下次还会通知，代码简单
+- 坏处：如果注册了可写事件但一直没数据要写，会被反复唤醒（CPU 100%）
+
+**ET（Edge Triggered，边缘触发）**：只在"状态从无到有"的那一刻通知一次。
+
+- 好处：通知次数少
+- 坏处：**必须一次把数据读干**（循环 read 直到 EAGAIN），否则剩下的数据永远不会再通知，连接"假死"。因此 ET 下 fd 必须是非阻塞的，否则最后那次 read 会永久阻塞
+
+**本实现用 LT** —— 与 muduo 一致。陈硕的理由：LT 的编程模型简单得多，而 ET 带来的性能提升在实际压测中并不显著。
+
+### LT 模式的铁律
+
+```cpp
+void TcpConnection::handleWrite() {
+    long n = send(sockfd_, outputBuffer_.peek(), outputBuffer_.readableBytes());
+    outputBuffer_.retrieve(n);
+    if (outputBuffer_.readableBytes() == 0) {
+        channel_->disableWriting();      // ← 全部发完了，立刻取消可写事件！
+    }
+}
+```
+
+**不取消的话，LT 模式会因为"发送缓冲区一直有空间"而无限触发，CPU 直接打满 100%。** 这是 Reactor 编程最经典的坑。
+
+## 7. EventLoop 与跨线程唤醒
+
+### 7.1 one loop per thread
+
+一个 `EventLoop` 对象只能在创建它的线程里 `loop()`。本实现用 `thread_local` 强制这个约束：
+
+```cpp
+thread_local EventLoop* t_loopInThisThread = nullptr;
+
+EventLoop::EventLoop() : threadId_(std::this_thread::get_id()) {
+    if (t_loopInThisThread) throw std::runtime_error("本线程已有 EventLoop");
+    t_loopInThisThread = this;
+}
+```
+
+### 7.2 唤醒机制 —— self-pipe trick
+
+**问题**：主线程想让 subLoop 立刻处理一个新连接，但 subLoop 此刻正阻塞在 `epoll_wait` 里（可能设置了 10 秒超时）。怎么让它马上醒？
+
+**解法**：给每个 EventLoop 配一个"唤醒 fd"，也注册到自己的 Poller 里。想唤醒它就往这个 fd 写 1 个字节 —— `epoll_wait` 立刻返回。
+
+| 平台 | 实现 |
+|---|---|
+| Linux | `eventfd(2)` —— 专为此设计，只占一个 fd，8 字节计数器，比 pipe 省一个 fd 也更快 |
+| Windows | 没有 eventfd 也没有 socketpair → **自连接**：在 `127.0.0.1:0` 上 bind+listen（端口 0 = 系统分配），查出实际端口，connect 到自己，accept 拿到另一端 |
+
+这个技巧叫 **self-pipe trick**，1990 年代就有了，至今是标准做法。
+
+唤醒 fd 的数据**必须读掉**，否则 LT 模式会一直触发可读事件（死循环打满 CPU）。
+
+### 7.3 runInLoop —— 把跨线程共享变成跨线程投递
+
+```cpp
+void EventLoop::runInLoop(Functor cb) {
+    if (isInLoopThread()) {
+        cb();                       // 已经在目标线程，直接执行，零开销
+    } else {
+        queueInLoop(std::move(cb));
+    }
+}
+
+void EventLoop::queueInLoop(Functor cb) {
+    { std::lock_guard lk(mutex_); pendingFunctors_.push_back(std::move(cb)); }
+    if (!isInLoopThread() || callingPendingFunctors_) wakeup();
+}
+```
+
+两种情况需要唤醒：
+
+1. 调用者是其它线程 → 目标线程可能正阻塞在 poll
+2. 调用者就是本线程，但正在执行 `doPendingFunctors` → 新任务不会被本轮循环处理（本轮的 swap 已经做完），所以要唤醒让 poll 立刻返回进入下一轮
+
+### 7.4 doPendingFunctors 的两个讲究
+
+```cpp
+void EventLoop::doPendingFunctors() {
+    std::vector<Functor> functors;
+    callingPendingFunctors_ = true;
+    {
+        std::lock_guard lk(mutex_);
+        functors.swap(pendingFunctors_);      // ← 关键
+    }
+    for (const Functor& f : functors) f();     // ← 不持锁执行
+    callingPendingFunctors_ = false;
+}
+```
+
+用 `swap` 而不是逐个取：
+
+1. 临界区极短（只交换两个指针），不阻塞其它线程投递任务
+2. 执行回调时**不持锁** —— 否则回调里再调 `queueInLoop` 就自己死锁了
+
+### 7.5 循环主体
+
+```cpp
+while (!quit_) {
+    activeChannels_.clear();
+    poller_->poll(kPollTimeoutMs, &activeChannels_);   // 1. 唯一的阻塞点
+    for (Channel* ch : activeChannels_) ch->handleEvent();  // 2. 分发
+    doPendingFunctors();                                // 3. 执行投递的任务
+}
+```
+
+第 3 步放在最后而不是最前，是为了让 IO 事件优先 —— IO 有实时性要求。
+
+## 8. TcpConnection
+
+### 8.1 状态机
+
+```
+kConnecting ──connectEstablished()──► kConnected
+                                          │
+                    ┌─────────────────────┼──────────────────┐
+                    │                     │                  │
+              shutdown()            对端 FIN            出错/强制关闭
+                    ▼                     ▼                  ▼
+              kDisconnecting ───────► kDisconnected ◄────────┘
+              (半关闭：我不再发，
+               但还能收)
+```
+
+### 8.2 sendInLoop 的三条路径
+
+这是整个库里最需要看懂的函数：
+
+**路径 1：输出缓冲区为空 → 尝试直接写进内核**（最快，跳过 Buffer）
+
+```cpp
+if (!channel_->isWriting() && outputBuffer_.readableBytes() == 0) {
+    nwrote = send(sockfd_, data, len);
+    remaining = len - nwrote;
+}
+```
+
+**为什么要判断缓冲区为空？** 因为 TCP 必须保序。如果 Buffer 里还有上次没发完的数据，这次的数据必须排在它后面，直接写会导致**数据顺序错乱** —— 这是很难查的 bug。
+
+**路径 2/3：还有剩余 → 存进 outputBuffer_ 并注册可写事件**
+
+```cpp
+if (remaining > 0) {
+    outputBuffer_.append(data + nwrote, remaining);
+    if (!channel_->isWriting()) channel_->enableWriting();
+}
+```
+
+### 8.3 高水位回调 —— 慢客户端保护
+
+服务端疯狂发数据、客户端故意不读时，数据会堆在服务端的 `outputBuffer_` 里。不管的话，**一个慢客户端就能让服务端 OOM** —— 这是真实事故的常见原因。
+
+```cpp
+conn->setHighWaterMarkCallback(
+    [](const TcpConnectionPtr& c, size_t bytes) {
+        c->forceClose();          // 典型处置：直接踢掉这个慢客户端
+    },
+    64 * 1024 * 1024);            // 64 MB 高水位线
+```
+
+自测验证：设 256 KB 高水位，服务端猛塞 8 MB，回调准确在堆积 256 KB 时触发。
+
+### 8.4 优雅关闭（半关闭）
+
+```cpp
+void TcpConnection::shutdownInLoop() {
+    if (channel_->isWriting()) return;    // 还有数据没发完，先别关
+    ::shutdown(sockfd_, SHUT_WR);          // 只关写端（发 FIN），读端保持打开
+}
+```
+
+**只关写端的意义**：告诉对端"我说完了"，但仍然能接收对端剩下要说的话。HTTP/1.0 的 `Connection: close` 就依赖这个语义。
+
+注意 `if (channel_->isWriting()) return;` —— 如果还有数据在发，先不关；`handleWrite` 发完后会回到这里。这保证了"先把话说完再挂电话"。
+
+### 8.5 跨线程 send
+
+```cpp
+void TcpConnection::send(std::string_view message) {
+    if (loop_->isInLoopThread()) {
+        sendInLoop(message.data(), message.size());
+    } else {
+        // 必须把数据**拷贝**一份带过去。不能只传指针 ——
+        // 等目标线程执行时，调用方的缓冲区可能已经没了。
+        loop_->runInLoop([self = shared_from_this(), str = std::string(message)] {
+            self->sendInLoop(str.data(), str.size());
+        });
+    }
+}
+```
+
+那个 `std::string(message)` 拷贝不是浪费，是**必需**的 —— 又是一次 `string_view` 悬垂的防御（第 13 章 2.2）。
+
+## 9. Acceptor 与两个生产细节
+
+### 9.1 SO_REUSEADDR 与 SO_REUSEPORT
+
+```cpp
+netc::set_reuse_addr(acceptSocket_, true);
+```
+
+**SO_REUSEADDR**：服务端重启时立刻可以重新 bind，不用等 TIME_WAIT 结束。没有它，重启会报 `Address already in use`，得等 60 秒。服务端**几乎必设**。
+
+**SO_REUSEPORT**（Linux 3.9+）：多个进程/线程各自 bind 同一端口，内核在它们之间做负载均衡。好处是彻底避免"惊群"—— 每个新连接内核只唤醒一个 accept 者。Nginx 就用这个。
+
+### 9.2 EMFILE 的处理 —— 一个真实的生产陷阱
+
+fd 耗尽时 `accept` 返回 `EMFILE`，但**连接仍然在内核的已完成队列里**。LT 模式下会立刻再次触发可读 → 死循环打满 CPU。
+
+对策：预留一个空闲 fd。
+
+```cpp
+idleFd_ = ::open("/dev/null", O_RDONLY | O_CLOEXEC);     // 构造时占一个
+
+// accept 遇到 EMFILE 时：
+::close(idleFd_);                              // 腾出一个位置
+idleFd_ = ::accept(acceptSocket_, nullptr, nullptr);
+::close(idleFd_);                              // accept 下来立刻关闭
+idleFd_ = ::open("/dev/null", O_RDONLY | O_CLOEXEC);     // 重新占回预留 fd
+```
+
+这样至少能把连接"礼貌地拒绝"掉，而不是把 CPU 打满。这个技巧来自 muduo，是很多自研网络库会漏掉的细节。
+
+### 9.3 循环 accept
+
+一次事件可能对应多个已完成的连接，所以要循环 accept 直到 `EWOULDBLOCK`。
+
+### 9.4 backlog
+
+```cpp
+::listen(acceptSocket_, SOMAXCONN);
+```
+
+backlog = 内核"已完成三次握手但还没被 accept"的队列长度。Linux 上受 `/proc/sys/net/core/somaxconn` 限制（默认 4096）。太小会导致高并发建连时客户端收到 RST 或超时重传。
+
+## 10. 聊天室：跨线程广播的两种解法
+
+广播必须访问"所有连接的列表"，而这些连接分布在**不同的**从属 Reactor 线程上。
+
+### 解法 A：成员列表加锁 + send 自动跨线程投递
+
+```cpp
+void broadcast(const std::string& msg) {
+    std::set<TcpConnectionPtr> snapshot;
+    {
+        std::lock_guard lk(mutex_);
+        snapshot = members_;          // 拷一份（shared_ptr 拷贝，保证目标存活）
+    }                                  // 锁在这里就释放了
+    for (const auto& m : snapshot) {
+        m->send(msg);                  // 可能跨线程，send 自己会处理
+    }
+}
+```
+
+**注意先拷贝再解锁，然后才发送。** 如果持锁发送，`send` 内部可能触发回调，回调里又访问 `members_` → 死锁。**"不要在持锁时调用外部代码"是并发编程的通用铁律**（第 13 章 5.3）。
+
+### 解法 B：每个 loop 各维护本 loop 的成员列表
+
+```cpp
+std::map<EventLoop*, std::set<TcpConnectionPtr>> perLoopMembers;
+
+void broadcastLockFree(const std::string& msg) {
+    for (EventLoop* loop : server_.getAllLoops()) {
+        loop->runInLoop([loop, msg] {
+            // 在 loop 自己的线程里，访问自己的成员集合，无需加锁
+            for (const auto& conn : perLoopMembers[loop]) {
+                conn->send(msg);      // 同线程，直接写，也没有拷贝开销
+            }
+        });
+    }
+}
+```
+
+完全无锁，但连接加入/离开时也要投递到对应 loop 处理，代码更绕。
+
+**成员数少（< 几千）时解法 A 完全够用，别过早优化。**
+
+## 11. 自测结果
+
+`ch16_reactor_selftest` 在单进程内启动 Reactor 服务器 + 阻塞式客户端线程，自动跑完 8 组验证：
+
+| 测试 | 验证点 | 结果 |
+|---|---|---|
+| 1 基本回显 | 连接、发送、接收、关闭的完整流程 | ✅ |
+| 2 多连接并发 | 40 个并发连接经 4 个从属 Reactor 分发 | ✅ 40/40 |
+| 3 大消息分片 | 2 MB 数据经 32 次可读事件拼接，逐字节一致 | ✅ |
+| 4 长度前缀协议 | 3 条消息粘在一个包里发送，正确拆分 | ✅ 3/3 |
+| 5 跨线程 send | 主线程推送到从属 Reactor 的连接 | ✅ |
+| 6 优雅关闭 | 先收到完整回复再收到 EOF | ✅ |
+| 7 高水位回调 | 慢客户端在堆积 256 KB 时被检出 | ✅ |
+| 8 吞吐压测 | 8 客户端 × 2000 次往返，无错误 | ✅ ~13 万 QPS（Debug） |
+
+关于那个 QPS：这是"一问一答"模式，主要受**往返延迟**限制，不是服务端的吞吐上限。真实压测要用 pipeline 或更多连接。
+
+测试代码故意用**阻塞式** IO 写客户端 —— 测试代码越简单越好，不要让测试本身成为 bug 来源。
+
+## 12. 独立运行
+
+```bash
+# 回显服务器
+build\bin\Debug\ch16_echo_server.exe 9001 4
+# 另一个终端
+nc 127.0.0.1 9001          # Linux/macOS
+telnet 127.0.0.1 9001      # Windows
+
+# 聊天室：开三个终端各自连上，互相发消息
+build\bin\Debug\ch16_chat_server.exe 9002 3
+```
+
+聊天室支持 `/who` 看在线、`/quit` 退出，第一条消息作为昵称。
+
+## 本章要点
+
+1. **Reactor = 「等就绪」而非「等数据」**，一个线程管上万连接
+2. **one loop per thread**：连接绑定到固定线程，连接内状态无需加锁 —— 这是正确性优势，不只是性能
+3. **应用层 Buffer 是非阻塞 IO 的必需品**（半包 / 粘包 / 写不完），`readv` + 栈上 extrabuf 兼顾省内存与省系统调用
+4. **`Channel::tie` + `enable_shared_from_this`** 解决"回调执行中对象被销毁"
+5. **写完必须 `disableWriting()`**，否则 LT 模式 CPU 打满
+6. 跨线程调用统一走 **`runInLoop` + eventfd/socketpair 唤醒**，把共享状态变成消息投递
+7. **高水位回调**是防慢客户端打爆内存的必要手段
+8. **epoll 只返回就绪 fd**（O(就绪数)），poll/select 要遍历全部（O(总数)）
+9. 生产细节容易漏：`SO_REUSEADDR`、EMFILE 预留 fd、循环 accept、backlog、半关闭
+
+# 第 17 章 · MySQL：命令与实现原理
+
+▶ 对应程序：`ch17_mysql`
+
+本章不需要安装 MySQL。原理部分全部用可运行的 C++ 模拟实现 —— 你能亲眼看到 B+ 树怎么长、MVCC 怎么判断可见性、Buffer Pool 怎么淘汰页。
+
+## 1. SQL 的逻辑执行顺序
+
+这是理解 SQL 的关键，也解释了两个高频困惑。
+
+**书写顺序**：`SELECT … FROM … JOIN … ON … WHERE … GROUP BY … HAVING … ORDER BY … LIMIT`
+
+**实际执行顺序**：
+
+1. `FROM` / `JOIN` — 确定数据来源
+2. `ON` — 连接条件过滤
+3. `WHERE` — 行级过滤（此时还没分组，用不了聚合函数）
+4. `GROUP BY` — 分组
+5. **聚合函数** — `COUNT`/`SUM`/`AVG` 在这一步计算
+6. `HAVING` — 组级过滤（可以用聚合函数）
+7. `SELECT` — 选出列、计算表达式、赋别名
+8. `DISTINCT` — 去重
+9. `ORDER BY` — 排序（可以用别名，因为第 7 步已完成）
+10. `LIMIT` — 取前 N 条
+
+由此可解释：
+
+- **为什么 `WHERE` 里不能用 `COUNT()`？** 因为 WHERE(3) 在聚合(5) 之前执行
+- **为什么 `WHERE` 里不能用 `SELECT` 的别名，`ORDER BY` 却可以？** 因为 WHERE(3) 早于 SELECT(7)，ORDER BY(9) 晚于 SELECT(7)
+
+## 2. 常用命令
+
+### 2.1 建库建表
+
+```sql
+CREATE DATABASE shop
+  DEFAULT CHARACTER SET utf8mb4
+  COLLATE utf8mb4_0900_ai_ci;
+```
+
+**为什么必须 utf8mb4 而不是 utf8？** MySQL 的 `utf8` 是历史遗留的**残缺**实现，每字符最多 3 字节，存不了 emoji 和部分生僻汉字（它们需要 4 字节）。`utf8mb4` 才是真正的 UTF-8。老库用 `utf8` 存 emoji 会直接报错或截断。
+
+```sql
+CREATE TABLE orders (
+    id          BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    user_id     BIGINT UNSIGNED NOT NULL,
+    order_no    VARCHAR(32)     NOT NULL,
+    amount      DECIMAL(12,2)   NOT NULL DEFAULT 0.00,
+    status      TINYINT         NOT NULL DEFAULT 0,
+    created_at  DATETIME(3)     NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    PRIMARY KEY (id),
+    UNIQUE  KEY uk_order_no (order_no),
+    KEY         idx_user_status_created (user_id, status, created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='订单表';
+```
+
+每个决定都有理由：
+
+| 决定 | 理由 |
+|---|---|
+| `BIGINT UNSIGNED AUTO_INCREMENT` 主键 | 顺序插入 → B+ 树不分裂（见 3.3） |
+| `DECIMAL(12,2)` 存金额 | 绝不用 `FLOAT`/`DOUBLE`（第 13 章 1.5） |
+| `NOT NULL` + `DEFAULT` | NULL 让索引统计和条件判断都变复杂 |
+| `DATETIME(3)` | 带毫秒；`DATETIME` 不含时区，`TIMESTAMP` 含时区但只到 2038 年 |
+| 联合索引列的顺序 | 见 5. 最左前缀 |
+
+### 2.2 DELETE / TRUNCATE / DROP 的区别
+
+| | 类型 | 可回滚 | 触发器 | 释放空间 | 自增值 |
+|---|---|---|---|---|---|
+| `DELETE` | DML，逐行删 | ✅（写 undo） | ✅ | ❌（只标记删除） | 不重置 |
+| `TRUNCATE` | DDL，重建表空间 | ❌ | ❌ | ✅ | **重置为 1** |
+| `DROP` | DDL | ❌ | ❌ | ✅ | — |
+
+### 2.3 深分页的正确写法
+
+```sql
+-- 慢：要先扫描并丢弃前 100 万行
+SELECT * FROM orders ORDER BY id LIMIT 1000000, 20;
+
+-- 快：用上次的最大 id 做游标，直接定位（keyset 分页）
+SELECT * FROM orders WHERE id > 1000000 ORDER BY id LIMIT 20;
+```
+
+### 2.4 取每组前 N 条（窗口函数，8.0+）
+
+```sql
+SELECT * FROM (
+    SELECT *, ROW_NUMBER() OVER (
+                 PARTITION BY user_id ORDER BY created_at DESC) AS rn
+    FROM orders
+) t WHERE rn <= 3;
+```
+
+### 2.5 生产环境的 ALTER 警告
+
+大表 `ALTER` 会锁表或长时间占用资源。MySQL 5.6+ 支持 Online DDL，但并非所有操作都支持：
+
+| ALGORITHM | 行为 |
+|---|---|
+| `INSTANT` | 秒级完成（8.0，加列在末尾） |
+| `INPLACE` | 不拷表，但可能重建索引 |
+| `COPY` | 拷全表，最慢，期间阻塞写 |
+
+```sql
+ALTER TABLE t ADD COLUMN c INT, ALGORITHM=INSTANT, LOCK=NONE;
+```
+
+大表变更推荐 `gh-ost` 或 `pt-online-schema-change`。
+
+### 2.6 运维诊断速查
+
+```sql
+SHOW FULL PROCESSLIST;                  -- 当前连接与正在执行的语句
+SHOW ENGINE INNODB STATUS;              -- InnoDB 全量状态（含最近一次死锁）
+SELECT * FROM performance_schema.data_lock_waits;   -- 锁等待（8.0）
+SELECT * FROM information_schema.innodb_trx ORDER BY trx_started;  -- 长事务
+
+-- 慢查询日志
+SET GLOBAL slow_query_log = ON;
+SET GLOBAL long_query_time = 1;
+-- 然后用 pt-query-digest 分析
+
+ANALYZE TABLE orders;      -- 重新采样索引统计（执行计划不准时用）
+```
+
+## 3. 为什么索引用 B+ 树
+
+### 3.1 候选方案的淘汰过程
+
+| 方案 | 淘汰原因 |
+|---|---|
+| 哈希表 | O(1) 等值查找，但**不支持范围查询和排序**。`WHERE age > 20`、`ORDER BY age` 全部失效 |
+| 二叉搜索树 / 红黑树 | 扇出只有 2 → 树高 O(log₂n)。100 万行 → 树高 20 → 20 次磁盘 IO |
+| B 树 | 多路平衡，但**非叶子节点也存数据** → 每节点能放的索引项变少 → 扇出下降 → 树更高。且范围查询要中序遍历，来回跳节点 |
+| **B+ 树** | ✅ 非叶子只存键 → 一页能放几百个键 ✅ 所有数据在叶子层且用双向链表连接 → 范围查询就是顺序扫链表 |
+
+InnoDB 内部只在**自适应哈希索引（AHI）** 里用哈希表做等值加速。
+
+### 3.2 关键容量计算
+
+InnoDB 页大小 16 KB。非叶子节点每项 = 键(8B, BIGINT) + 页号(6B) = 14 B，**扇出 ≈ 16384 / 14 ≈ 1170**。
+
+程序实测输出：
+
+| 每行大小 | 每页行数 | 树高 2 | 树高 3 | 树高 4 |
+|---|---|---|---|---|
+| 100 B | 163 | 19 万 | **2 亿** | 2610 亿 |
+| 200 B | 81 | 9 万 | 1 亿 | 1297 亿 |
+| 500 B | 32 | 3 万 | 4380 万 | 512 亿 |
+| 1000 B | 16 | 1 万 | 2190 万 | 256 亿 |
+
+**结论：常规表（行 1 KB 以内）在树高 3 时就能存千万到上亿行。** 而根节点和大部分非叶子节点常驻 Buffer Pool，所以一次主键查找通常只有 0~1 次真实磁盘 IO。
+
+对比红黑树：
+
+| 行数 | B+ 树（扇出 1170） | 红黑树（扇出 2） |
+|---|---|---|
+| 1 万 | 2 层 | 14 层 |
+| 100 万 | 3 层 | 20 层 |
+| 1 亿 | **4 层** | **27 层** |
+
+磁盘随机 IO 约 0.1 ms（SSD）到 10 ms（HDD）。27 次 IO 在 HDD 上就是 270 ms —— 一个查询走完就超时了。
+
+**内存里红黑树很好（`std::map` 就用它），但磁盘索引必须降低树高。**
+
+### 3.3 范围查询的实测差异
+
+程序实测（order=8，5000 个键）：
+
+- `find(3777)` — 访问 6 个节点（= 树高）
+- `range(3000, 3050)` 返回 51 行 — 访问 19 个节点，其中 6 次用于定位起点，**其余是沿叶子链表顺序扫描**
+
+B 树没有叶子链表，范围查询要不断回到父节点，全是随机 IO。这就是 B+ 树胜出的关键。
+
+## 4. 聚簇索引与二级索引
+
+**InnoDB 的表本身就是一棵 B+ 树**，这棵树叫聚簇索引，叶子节点直接存放完整的行数据。
+
+```
+聚簇索引（主键 id）                二级索引（KEY idx_name(name)）
+┌───────────────────┐            ┌───────────────────┐
+│   [10 | 50 | 90]  │  内部节点   │  [Bob | Tom]      │
+└────┬──────┬───────┘            └────┬────────┬─────┘
+┌────▼──┐ ┌─▼─────┐              ┌────▼──┐ ┌───▼───┐
+│ id=10 │ │ id=50 │  叶子节点     │Alice  │ │Tom    │
+│ 完整行│ │ 完整行│  存**数据**   │ id=50 │ │ id=10 │  存**主键值**
+└───────┘ └───────┘              └───────┘ └───────┘
+```
+
+### 回表
+
+```sql
+SELECT * FROM t WHERE name = 'Tom';
+```
+
+1. 在 `idx_name` 上找到 `'Tom'` → 得到 `id=10`
+2. 拿 `id=10` 再去聚簇索引查一遍 → 得到完整行
+
+两棵树各走一遍，IO 翻倍。第二步就叫**回表**。
+
+### 覆盖索引 —— 消除回表
+
+```sql
+SELECT id, name FROM t WHERE name = 'Tom';
+```
+
+需要的 `id` 和 `name` 都在 `idx_name` 里（name 是键，id 是值），**不用回表**。`EXPLAIN` 的 Extra 列会显示 `Using index`。
+
+实用技巧：高频查询且只要少数几列时，把这几列加进索引：
+
+```sql
+KEY idx_name_age (name, age)    -- 现在 SELECT name, age 也不回表
+```
+
+代价：索引变大，写入变慢。典型的空间换时间。
+
+### 为什么主键必须短且自增
+
+1. **每个二级索引的叶子都存一份主键值。** 主键用 UUID（36 字节 varchar）而不是 BIGINT（8 字节），10 个二级索引就多占 280 字节/行
+2. **自增主键 = 顺序插入** = 总是往最右边的页追加，页利用率高、几乎不分裂。随机主键（UUID）= 随机插入 = 频繁页分裂 + 页内碎片，实测写入性能差几倍
+3. **没有显式主键时**，InnoDB 会：先找第一个 `NOT NULL` 的唯一索引；都没有就生成一个 6 字节的隐藏 `ROW_ID` —— 这个 ROW_ID 是**全局共享**的自增值，高并发插入会成为竞争点
+
+**永远显式定义主键。** 业务需要 UUID 时：内部用自增 BIGINT 主键，UUID 作为带唯一索引的业务列；或用有序 UUID（UUIDv7 / 雪花 ID）。
+
+## 5. 索引失效的 8 种场景
+
+### 最左前缀原则
+
+联合索引 `KEY idx_abc (a, b, c)` 的 B+ 树是按 `(a, b, c)` 的**字典序**排列的。就像电话簿按"姓, 名"排序：知道姓能快速定位，只知道名就只能全本翻。
+
+| 条件 | 是否用到索引 |
+|---|---|
+| `WHERE a=1` | ✅ 用到 (a) |
+| `WHERE a=1 AND b=2` | ✅ 用到 (a,b) |
+| `WHERE a=1 AND b=2 AND c=3` | ✅ 全覆盖 |
+| `WHERE a=1 AND c=3` | △ 只用到 (a)，c 无法用于定位 |
+| `WHERE b=2` | ❌ 跳过了最左列 |
+| `WHERE a=1 AND b>2 AND c=3` | △ a,b 用到；**b 是范围查询，c 无法再用于定位** |
+
+**推论：范围列要放联合索引的最后。**
+
+注意 `WHERE b=2 AND a=1` 是**可以**用到索引的 —— 优化器会自动调整条件顺序。"最左"指的是**索引列**的顺序，不是 SQL 里书写的顺序。
+
+### 八种失效场景
+
+**① 对索引列做运算或用函数**
+
+```sql
+✗ WHERE YEAR(created_at) = 2026
+✓ WHERE created_at >= '2026-01-01' AND created_at < '2027-01-01'
+```
+
+索引里存的是原值，`YEAR(x)` 的结果没有索引。（8.0.13+ 支持函数索引：`ADD INDEX ((YEAR(created_at)))`）
+
+**② 隐式类型转换 ← 最隐蔽的一个**
+
+表里 `phone` 是 `VARCHAR`：
+
+```sql
+✗ WHERE phone = 13800138000      -- 数字！触发 CAST(phone AS SIGNED)
+✓ WHERE phone = '13800138000'    -- 加引号
+```
+
+代码里传参类型写错就中招，而且**不报错，只是慢 1000 倍**。反过来 int 列写 `WHERE id = '99'` 不会失效（转换发生在常量侧）。
+
+**这是全书隐蔽程度排名第一的坑**，比第 13 章任何一个 C++ 坑都难发现。
+
+**③ 字符集/排序规则不一致的 JOIN** — 需要转换，索引失效。建库时统一字符集能避免。
+
+**④ 前导模糊匹配**
+
+```sql
+✗ WHERE name LIKE '%tom'     ✗ WHERE name LIKE '%tom%'
+✓ WHERE name LIKE 'tom%'
+```
+
+需要"包含"搜索：用全文索引（FULLTEXT）或 ES。
+
+**⑤ OR 连接的条件中有非索引列** — 整个查询全表扫。给所有列建索引，或改写成 `UNION ALL`。
+
+**⑥ `!=` / `<>` / `NOT IN` / `NOT EXISTS`** — 通常失效，但取决于选择性。
+
+**⑦ `IS NOT NULL`** — InnoDB 的索引会存 NULL 值，所以 `IS NULL` 能用索引；`IS NOT NULL` 命中范围太大，常被放弃。
+
+**⑧ 优化器主动放弃（这不是 bug）** — 当预估命中行数超过全表的 20~30% 时，优化器认为"随机回表 N 次"比"顺序全表扫"更贵。统计信息不准导致的误判用 `ANALYZE TABLE` 修正，或 `FORCE INDEX` 强制（慎用）。
+
+### 索引选择性
+
+选择性 = 不同值的数量 / 总行数。程序实测（100 万行）：
+
+| 列 | 不同值 | 选择性 | 建索引？ |
+|---|---|---|---|
+| `id`（主键） | 1000000 | 1.00000 | 值得（唯一索引） |
+| `order_no` | 999500 | 0.99950 | 值得（唯一索引） |
+| `user_id` | 50000 | 0.05000 | 值得 |
+| `city` | 300 | 0.00030 | 看查询模式 |
+| `status` | 5 | 0.00001 | 单列不值得 |
+| `is_deleted` | 2 | 0.00000 | 单列不值得 |
+
+`status` / `is_deleted` 这类低选择性列**单独**建索引没意义（命中 20 万行，回表 20 万次比全表扫还慢），但放进联合索引的**非首列**很有用：
+
+```sql
+KEY idx_user_status (user_id, status)
+```
+
+先用高选择性的 `user_id` 把范围缩到几十行，再用 `status` 过滤。
+
+## 6. 事务与隔离级别
+
+### ACID 各自由什么机制保证
+
+| | | 机制 |
+|---|---|---|
+| **A** | 原子性 | **undo log** —— 回滚时把数据改回去 |
+| **C** | 一致性 | 上面三者 + 约束（外键/唯一/CHECK） |
+| **I** | 隔离性 | **锁 + MVCC** |
+| **D** | 持久性 | **redo log** —— 崩溃后重放已提交的修改 |
+
+### 三类并发问题
+
+| 问题 | 含义 |
+|---|---|
+| 脏读 | 读到了别的事务**还没提交**的修改。对方一回滚，你读到的就是从未存在的数据 |
+| 不可重复读 | 同一事务内两次读**同一行**，值不一样（别的事务提交了 UPDATE） |
+| 幻读 | 同一事务内两次执行**同一范围查询**，行数不一样（别的事务提交了 INSERT） |
+
+注意区分：幻读针对"行的出现/消失"，不可重复读针对"已有行的值变化"。
+
+### 四种隔离级别
+
+| 级别 | 脏读 | 不可重复读 | 幻读 |
+|---|---|---|---|
+| READ UNCOMMITTED | 可能 | 可能 | 可能 |
+| READ COMMITTED | 不会 | 可能 | 可能 |
+| **REPEATABLE READ**（MySQL 默认） | 不会 | 不会 | 基本不会* |
+| SERIALIZABLE | 不会 | 不会 | 不会 |
+
+**\* 关于 RR 与幻读 —— 这是最容易讲错的地方：**
+
+- **快照读**（普通 SELECT）：靠 MVCC，整个事务用同一个 ReadView，所以看不到别人新插入的行 → 无幻读
+- **当前读**（`SELECT FOR UPDATE` / `UPDATE` / `DELETE`）：读最新版本，靠 next-key lock 锁住范围来防止插入 → 无幻读
+- 所以 **InnoDB 的 RR 确实解决了幻读**，这与教科书上"RR 不解决幻读"的说法不同 —— 教科书讲的是 SQL 标准，InnoDB 的实现**比标准更强**
+- 唯一残留的例外：先快照读，再在同一事务里对该行做当前读/更新，会"看到"自己之前看不到的行
+
+**为什么 MySQL 默认 RR 而 PostgreSQL / Oracle / SQL Server 默认 RC？** 历史原因：早期的 binlog 只有 STATEMENT 格式，RC 下会导致主从数据不一致。现在用 ROW 格式已无此问题，很多大厂规范里明确要求改成 RC —— 因为 RC 的锁范围更小、间隙锁更少、死锁概率更低。
+
+## 7. MVCC —— 让读不加锁
+
+MVCC（Multi-Version Concurrency Control）让读操作去找"一个对我可见的历史版本"，而不是等写锁释放。于是**读写不互相阻塞**，这是 InnoDB 高并发的根本原因。
+
+### 三个组成部分
+
+1. 每行的隐藏列 `DB_TRX_ID`（谁改的）和 `DB_ROLL_PTR`（上个版本在哪）
+2. undo log 里串起来的**版本链**
+3. **ReadView** —— 事务开始快照读时拍下的"当时谁在运行"的快照
+
+```
+当前行 (trx_id=30) ──roll_ptr──► undo(trx_id=20) ──► undo(trx_id=10)
+name='v3'                        name='v2'            name='v1'
+```
+
+### 可见性判断算法
+
+ReadView 有 4 个字段：`m_ids`（创建时仍活跃的事务 id 集合）、`min_trx_id`、`max_trx_id`、`creator_trx_id`。
+
+对每个版本（trx_id 记为 T）从新到旧依次判断：
+
+1. `T == creator_trx_id` → **可见**（自己改的当然能看见）
+2. `T < min_trx_id` → **可见**（在我拍快照前就已提交）
+3. `T >= max_trx_id` → **不可见**（我拍快照之后才开启的事务）
+4. `min_trx_id <= T < max_trx_id`：
+   - `T ∈ m_ids` → **不可见**（拍快照时它还没提交）
+   - `T ∉ m_ids` → **可见**（拍快照时它已提交）
+
+不可见就顺 `roll_ptr` 往老版本走，直到找到可见的或链走完。
+
+### RC 与 RR 的唯一区别
+
+**就在什么时候创建 ReadView：**
+
+- **RC**：每条 SELECT 语句都新建一个 → 能看到别人新提交的 → 不可重复读
+- **RR**：事务内第一条 SELECT 建一个，之后一直复用 → 整个事务视图一致
+
+### 程序实测
+
+场景：事务 1 写入并提交；事务 2 开启（不提交）；事务 3 修改并提交；事务 4 修改但不提交。
+
+```
+【事务 2 做快照读（RR）】
+    ReadView{creator=2, min=3, max=3, active={}}
+      版本 1: trx_id=4 value="v3-事务4未提交"  -> 不可见（快照之后才开启的事务）
+      版本 2: trx_id=3 value="v2-被事务3修改"  -> 不可见（快照之后才开启的事务）
+      版本 3: trx_id=1 value="v1-初始值"       -> 可见（早于快照且已提交）
+    结果: v1-初始值
+
+【新事务做快照读（RC）】
+    ReadView{creator=5, min=2, max=6, active={2,4}}
+      版本 1: trx_id=4 value="v3-事务4未提交"  -> 不可见（快照时该事务仍未提交）
+      版本 2: trx_id=3 value="v2-被事务3修改"  -> 可见（快照时该事务已提交）
+    结果: v2-被事务3修改
+
+【事务 4 读自己的未提交修改】
+      版本 1: trx_id=4 value="v3-事务4未提交"  -> 可见（自己修改的）
+    结果: v3-事务4未提交
+```
+
+### MVCC 的代价：长事务
+
+只要还有事务的 ReadView 可能需要某个老版本，undo log 就**不能清理**。一个开着不提交的长事务（比如忘了 commit 的会话）会导致 undo 一直累积 —— 这是生产环境 ibdata 暴涨的经典原因。
+
+排查：
+
+```sql
+SELECT trx_id, trx_started,
+       TIMESTAMPDIFF(SECOND, trx_started, NOW()) AS duration_s,
+       trx_rows_modified, trx_query
+FROM information_schema.innodb_trx ORDER BY trx_started;
+```
+
+预防：设 `innodb_max_undo_log_size` + 开 `innodb_undo_log_truncate`；应用侧设事务超时，**别把事务跨越网络调用或用户交互**；监控长事务并告警。
+
+## 8. 锁
+
+**InnoDB 的锁加在索引上，不是加在行上** —— 这是理解所有锁问题的前提。
+
+**推论**：如果 `WHERE` 条件用不到索引，就只能锁住扫过的**所有**记录，效果近似锁表。所以索引失效不仅慢，还会放大锁冲突。
+
+### 三种行级锁
+
+| 锁 | 含义 |
+|---|---|
+| Record Lock | 锁住索引上的一条具体记录 |
+| Gap Lock | 锁住两条记录**之间**的空隙，阻止插入 → 防幻读 |
+| **Next-Key Lock** | Record + 前面的 Gap，即**左开右闭** `(前一条, 本条]`。**RR 下的默认加锁方式** |
+
+例：表里有 `id = 5, 10, 15, 20`，间隙为 `(-∞,5) (5,10) (10,15) (15,20) (20,+∞)`
+
+| SQL | 加锁范围 |
+|---|---|
+| `WHERE id = 10 FOR UPDATE` | 唯一索引且记录存在 → 退化成 Record Lock，只锁这一行 |
+| `WHERE id = 12 FOR UPDATE`（不存在） | **锁住间隙 (10,15)** —— 别人插 11/12/13/14 全部阻塞 |
+| `WHERE id > 10 AND id <= 18 FOR UPDATE` | 锁 `(10,15]` 和 `(15,20]` —— **右边界扩到了 20！** |
+
+"查不存在的行也会加锁"是很多插入死锁的源头。
+
+### 死锁
+
+**成因 1：加锁顺序相反**（与第 13 章 5.3 同源）
+
+```
+事务A: UPDATE WHERE id=1;  然后 WHERE id=2;
+事务B: UPDATE WHERE id=2;  然后 WHERE id=1;
+```
+
+对策：让所有事务按**固定顺序**（比如 id 升序）访问行。批量更新前先 `ORDER BY id`。
+
+**成因 2：唯一索引冲突 + 间隙锁** — 两个事务同时 INSERT 同一唯一键，先来的持有 X 锁，后来的检测到重复要加 S 锁等待，此时先来的回滚 → 死锁。对策：用 `INSERT … ON DUPLICATE KEY UPDATE`。
+
+**排查步骤**：
+
+1. `SHOW ENGINE INNODB STATUS;` 看 `LATEST DETECTED DEADLOCK` 段 —— 它会明确列出两个事务各自持有什么锁、在等什么锁、执行的 SQL、以及 InnoDB 回滚了哪一个
+2. 开 `innodb_print_all_deadlocks=ON` 把所有死锁记进错误日志（默认只保留最近一次）
+3. `innodb_lock_wait_timeout` 默认 50 秒，通常应调小到 5~10 秒
+
+**重要认知：死锁不可能完全避免，应用层必须有重试逻辑。** InnoDB 会自动检测并回滚其中一个（报 1213 Deadlock found），你的代码应该捕获它并**重试整个事务**（不是重试单条 SQL）。
+
+## 9. 日志系统
+
+| | 谁产生 | 记录什么 | 用途 |
+|---|---|---|---|
+| **redo log** | InnoDB 引擎 | **物理**：某页某偏移改成什么 | 崩溃恢复（D）。循环写，固定大小 |
+| **undo log** | InnoDB 引擎 | **逻辑**：反向操作 | 回滚（A）+ MVCC 版本链 |
+| **binlog** | MySQL Server（引擎无关） | **逻辑**：SQL 或行变更 | 主从复制、时间点恢复。追加写 |
+
+### WAL：Write-Ahead Logging
+
+修改数据时**先写日志，再改数据页**。为什么更快？
+
+- 改数据页是**随机**写（页散布在磁盘各处）
+- 写 redo log 是**顺序**追加
+
+顺序写比随机写快 1~2 个数量级。于是：先顺序写日志保证不丢，脏页慢慢在后台刷；崩溃了就重放 redo log。
+
+### 两阶段提交
+
+redo log 是引擎层的，binlog 是 Server 层的，两者必须一致，否则主从数据会不一致：
+
+- 只写 redo 不写 binlog 就崩溃 → 主库有这条数据，从库靠 binlog 复制 → 没有
+- 只写 binlog 不写 redo 就崩溃 → 主库没有，从库有
+
+所以提交流程是：
+
+1. 写 redo log，标记为 **prepare**
+2. 写 binlog 并 fsync
+3. 写 redo log，标记为 **commit**
+
+崩溃恢复的判定规则：
+
+| redo 状态 | binlog | 动作 |
+|---|---|---|
+| commit | — | 提交 |
+| prepare | 完整 | **提交**（因为从库会执行它） |
+| prepare | 不完整 | 回滚 |
+
+### 两个关键参数（数据安全 vs 性能的核心权衡）
+
+`innodb_flush_log_at_trx_commit`：
+
+| 值 | 行为 | 风险 |
+|---|---|---|
+| **1**（默认） | 每次提交都 fsync redo | 最安全，掉电不丢 |
+| 2 | 每次写 OS 缓存，每秒 fsync | MySQL 崩溃不丢，掉电丢 1 秒 |
+| 0 | 每秒才写并 fsync | 崩溃就丢 1 秒 |
+
+`sync_binlog`：1 = 每次提交都 fsync（默认最安全）；0 = 交给 OS；N = 每 N 次提交 fsync。
+
+"**双 1**"配置是金融级标准，性能损失明显；很多互联网业务用 `(2, 1000)` 换吞吐。**这是个业务决策，不是技术最优解问题。**
+
+### binlog 三种格式
+
+| 格式 | 特点 |
+|---|---|
+| STATEMENT | 记 SQL 原文。日志小，但 `NOW()`、`UUID()`、无 ORDER BY 的 LIMIT 会导致主从不一致 |
+| **ROW** | 记每一行的前后镜像。安全，**现在的推荐值**。缺点是一条影响百万行的 UPDATE 产生百万条记录 |
+| MIXED | 平时 STATEMENT，遇到不确定语句自动切 ROW |
+
+## 10. Buffer Pool 与改进版 LRU
+
+Buffer Pool 通常配置为物理内存的 50~75%，是 MySQL **最重要**的性能参数：命中率从 95% 掉到 90%，磁盘 IO 就翻倍。
+
+### 为什么不能用朴素 LRU
+
+**问题 1：预读失效。** InnoDB 会线性预读（访问一个区里的多个页时把整个区 64 页读进来）。预读的页若最终没被访问，却占在 LRU 头部，把真正的热数据挤到尾部。
+
+**问题 2：缓冲池污染（更严重）。** 一条 `SELECT * FROM big_table` 读进几百万个页，每个只用一次。朴素 LRU 会把**所有热数据全部淘汰**。扫描结束后命中率归零，线上响应时间瞬间飙升。
+
+### InnoDB 的解法：young / old 分区
+
+```
+┌──────────────── young (默认 5/8) ────────────┬──── old (3/8) ────┐
+│ 热数据                                       │ 新读入的页在这里  │
+└──────────────────────────────────────────────┴───────────────────┘
+  ↑ head                                          midpoint      tail ↑
+                                                                淘汰端
+```
+
+**规则 1**：新页插入到 **midpoint**（old 区头部），不是链表头 → 全表扫描的页只在 old 区打转，动不到 young 区的热数据。
+
+**规则 2**：old 区的页被再次访问时，只有距首次访问超过 `innodb_old_blocks_time`（默认 1000 ms）才提升到 young 区 → 全表扫描时同一页在短时间内被连续访问（一页有多行），但间隔 < 1 秒，所以**不会**被提升。
+
+### 程序实测
+
+缓冲池 100 页，30 个热页，全表扫描 5000 个冷页：
+
+| 阶段 | 朴素 LRU | InnoDB LRU |
+|---|---|---|
+| 建立热点后 | 30/30 | 30/30（30 次 old→young 提升） |
+| **全表扫描后** | **0/30** | **30/30** |
+| 业务恢复期命中率 | 95.0% | **100.0%** |
+
+扫描期间 InnoDB 的额外提升次数 = **0** —— 两条规则完美挡住了扫描。
+
+朴素 LRU 的热数据要重新从磁盘加载一遍才能恢复。在真实系统里这就是"**跑了一条没加索引的大查询，之后几分钟所有接口都变慢**"的直接原因。
+
+（实现细节：old 区必须是当前链表长度的**比例**，不能是固定条数。写成固定条数时，缓冲池还没填满的情况下 midpoint 会落到靠前位置，新页被插进热数据中间，防污染完全失效 —— 本章开发时真踩了这个坑。）
+
+### 相关参数与监控
+
+```sql
+-- 命中率 = 1 - Innodb_buffer_pool_reads / Innodb_buffer_pool_read_requests
+SHOW STATUS LIKE 'Innodb_buffer_pool_read%';
+```
+
+生产环境应 > 99%。低于 95% 就该考虑加内存或优化 SQL。
+
+| 参数 | 说明 |
+|---|---|
+| `innodb_buffer_pool_size` | 最重要，物理内存的 50~75% |
+| `innodb_buffer_pool_instances` | 分成多个实例减少内部锁竞争（池 > 1 GB 时建议 8） |
+| `innodb_old_blocks_pct` | old 区占比，默认 37 |
+| `innodb_old_blocks_time` | 默认 1000 ms，防污染的关键 |
+
+## 11. EXPLAIN 与优化流程
+
+### type —— 最该先看的列（从好到坏）
+
+| type | 含义 |
+|---|---|
+| `system` / `const` | 通过主键或唯一索引等值匹配，最多一行。最快 |
+| `eq_ref` | JOIN 时用主键/唯一索引匹配 |
+| `ref` | 用非唯一索引等值匹配，返回多行 |
+| `range` | 索引范围扫描（BETWEEN / > / IN） |
+| `index` | 扫描整棵索引树（比 ALL 好，索引比数据小） |
+| **`ALL`** | **全表扫描 ← 看到这个就要警觉** |
+
+**实践底线：线上查询至少要到 `range`，理想是 `ref` 或更好。** 例外：小表（几百行）全表扫反而更快。
+
+### 其它关键列
+
+- **`possible_keys` 有值但 `key` 是 NULL** → 优化器主动放弃了，通常是选择性太差或统计信息过期（试 `ANALYZE TABLE`）
+- **`key_len`** → 用它判断联合索引用到了几列！计算规则：INT=4，BIGINT=8，可为 NULL 的列 +1，VARCHAR(n) utf8mb4 = 4n+2
+- **`rows` × `filtered` / 100** ≈ 实际参与后续操作的行数
+
+### Extra —— 信息量最大的一列
+
+| 值 | 含义 |
+|---|---|
+| `Using index` | **覆盖索引，不回表。好** |
+| `Using index condition` | 索引条件下推（ICP），在引擎层就过滤，好 |
+| `Using where` | 用 WHERE 过滤了从表里取出的行 |
+| `Using filesort` | **需要额外排序，要优化**（不一定用磁盘，内存排序也叫这名字） |
+| `Using temporary` | **用了临时表，要优化**（常见于 GROUP BY / DISTINCT） |
+| `Using join buffer` | JOIN 没用上索引，退化成 BNL 算法，要优化 |
+
+进阶：`EXPLAIN FORMAT=JSON`（带 cost 估算）；**`EXPLAIN ANALYZE`**（8.0.18+，**真正执行**并给出实际耗时，比估算可信得多）。
+
+### 慢查询优化的标准流程
+
+**1. 定位** — 慢查询日志 → `pt-query-digest` → 找总耗时占比最高的语句。
+
+排序依据是"**总耗时**"而不是"单次耗时"：一条 10 ms 但每秒执行 1000 次的 SQL，比一条 5 秒但每天跑一次的更值得优化。
+
+**2. 分析** — `EXPLAIN` 看 type / key / rows / Extra。
+
+**3. 优化（按性价比排序）**
+
+- **a) 加/调索引** —— 最常见，收益最大
+  - 等值列在联合索引前面，范围列放最后
+  - `ORDER BY` 的列跟在等值列后面，可消除 filesort
+  - 把 SELECT 的列并入索引 → 覆盖索引，消除回表
+- **b) 改写 SQL**
+  - `SELECT *` 改成只取需要的列（可能变成覆盖索引）
+  - 深分页改 keyset 分页
+  - 大批量 UPDATE/DELETE 拆成小批次（减少锁范围和主从延迟）
+- **c) 调整表结构** —— 拆冷热字段、适度反范式
+- **d) 加缓存 / 读写分离 / 分库分表** ← **最后才考虑**，引入的复杂度远大于前三项
+
+**4. 验证** — `EXPLAIN ANALYZE` 对比前后实际耗时。**别忘了看写入是否变慢了**（每个索引都会拖慢 INSERT/UPDATE）。
+
+### 常见误区纠正
+
+| 误区 | 事实 |
+|---|---|
+| 索引越多越好 | 每个索引占空间、拖慢写入。单表建议不超过 5~6 个 |
+| `COUNT(1)` 比 `COUNT(*)` 快 | **完全一样**。InnoDB 对 `COUNT(*)` 有专门优化。`COUNT(列)` 才不同 —— 它跳过 NULL，语义都不一样 |
+| 查主键一定最快 | `SELECT * WHERE id IN (1000 个 id)` 是 1000 次随机 IO，可能比一次范围扫描慢 |
+| JOIN 一定比子查询慢（或反之） | 取决于具体情况和版本。8.0 对半连接优化好了很多。结论只能靠 `EXPLAIN ANALYZE` 实测 |
+| 加了索引就一定会用 | 见第 5 节的 8 种失效场景 |
+
+### 为什么 InnoDB 的 COUNT(*) 慢
+
+因为 **MVCC**：不同事务看到的行数可能不同（有的行对你可见，对我不可见），没法维护一个全局计数器。MyISAM 没有 MVCC，所以能存一个准确的总数。
+
+优化：`COUNT(*)` 会自动选择最小的二级索引扫描；业务上通常用 Redis 或单独的计数表维护近似值。
+
+## 本章要点
+
+1. **B+ 树**：非叶子只存键 → 扇出大 → 树高 3 层存千万行 → 1~3 次 IO；叶子链表让范围查询变顺序读
+2. InnoDB 表就是聚簇索引；二级索引叶子存主键 → **回表**；**覆盖索引**消除回表。主键要短且自增
+3. 页 16 KB 是 IO 最小单位；单行别超 8 KB
+4. **最左前缀**：联合索引按字典序排；范围列放最后
+5. 索引失效的头号隐蔽杀手是**隐式类型转换**（VARCHAR 列传数字）
+6. ACID = undo(A) + redo(D) + 锁与 MVCC(I)
+7. **MVCC** 让读不加锁：版本链 + ReadView 四步判断。**RC 与 RR 的唯一区别是 ReadView 何时创建**
+8. 锁加在**索引**上；RR 默认 next-key lock（左开右闭）防幻读。**死锁无法避免，应用必须重试整个事务**
+9. WAL + 两阶段提交保证 redo 与 binlog 一致
+10. Buffer Pool 的 **young/old 分区**专门防全表扫描污染缓存
+11. 优化先看 `EXPLAIN` 的 `type` 和 `Extra`；**加索引 > 改写 SQL > 改表结构 > 加缓存分库**
+
+# 附录 A · 复习计划（4 周主线 + 3 周进阶）
 
 按每天 2~3 小时估算。赶时间就跳过标 ☆ 的部分。
 
@@ -4434,6 +7356,48 @@ HTTP/3 用 UDP + QUIC，每个流独立，一个流丢包不影响其它流。
 | 26 | 11.4~11.6（LT vs ET / Reactor / 实际难点） | ☆ 在 WSL 上跑 epoll 版；把 LT 改成 ET，故意只读一次，观察连接假死 |
 | 27 | 第 12 章 HTTP 上半（协议 / 解析器 / 架构） | 加一个新路由 + 一个新中间件（比如请求计数限流） |
 | 28 | 第 12 章 HTTP 下半 + 总复习 | ☆ 把线程池换成 epoll 事件循环；用 `wrk` 压测对比 QPS |
+
+至此主线完成：你能独立写出一个多线程 HTTP 服务器，并说清 TCP 的每个状态。
+
+---
+
+## 第 5 周：查漏补缺 + 智能指针
+
+| 天 | 内容 | 动手任务 |
+|----|------|---------|
+| 29 | 第 13 章 1~2 组（初始化与类型 / 指针与生命周期） | 把前 4 周自己写的代码全部开 `-fsanitize=address,undefined` 重跑一遍 |
+| 30 | 第 13 章 3 组（类与对象） | 给第 7 章的类补齐五法则；用 `copy-and-swap` 重写一个赋值运算符 |
+| 31 | 第 13 章 4 组（现代特性的坑） | 找出自己代码里所有 `[&]` 捕获，判断哪些会悬垂 |
+| 32 | 第 13 章 5~6 组（并发 / 其它） | 把第 9 章的 `thread` 版服务器改成 `jthread`，加 `stop_token` 优雅退出 |
+| 33 | 第 14 章 A~B（为什么需要 / 三种指针用法） | 给 `FILE*`、`socket` 各写一个 RAII 封装 |
+| 34 | 第 14 章 C（手写实现） | **不看源码，自己写一遍 `MyUniquePtr`**，然后对照 |
+| 35 | 复习 + 第 5 周小结 | 默写：控制块结构、`weak_ptr::lock()` 的 CAS 循环、`enable_shared_from_this` 原理 |
+
+## 第 6 周：STL 源码
+
+| 天 | 内容 | 动手任务 |
+|----|------|---------|
+| 36 | 第 15 章 1~3（六大组件 / 迭代器 traits / allocator） | 用 tag dispatch、`if constexpr`、concepts 三种方式各写一遍 `advance` |
+| 37 | 第 15 章 4（vector） | **手写 `MyVector`**，用探针类型验证 reserve 和 noexcept 的效果 |
+| 38 | 第 15 章 5~6（string SSO / list 哨兵） | 手写带 SSO 的 string，测出你的实现的阈值 |
+| 39 | 第 15 章 7（红黑树） | 手写插入 + 不变式校验；☆ 挑战：补上删除 |
+| 40 | 第 15 章 8~9（哈希表 / deque） | 手写哈希表；给自定义类型写一个正确的 `hash_combine` |
+| 41 | 第 15 章 10~11（introsort / 性能实测） | 在 **Release** 下跑基准，和文档里的数字对比你的机器 |
+| 42 | 复习 + 第 6 周小结 | 默写容器选型决策树和各容器的迭代器失效规则 |
+
+## 第 7 周：Reactor + MySQL
+
+| 天 | 内容 | 动手任务 |
+|----|------|---------|
+| 43 | 第 16 章 1~4（模型演进 / 类结构 / 主从 Reactor / Buffer） | 读 `reactor.h` 全部注释；画出类之间的持有关系图 |
+| 44 | 第 16 章 5~6（Channel::tie / Poller / LT vs ET） | 故意注释掉 `disableWriting()`，观察 CPU 打满 |
+| 45 | 第 16 章 7（EventLoop / 跨线程唤醒） | 注释掉 `wakeup()`，观察跨线程 send 要等 10 秒才生效 |
+| 46 | 第 16 章 8~9（TcpConnection / Acceptor 生产细节） | 给 `TcpConnection` 加一个空闲连接超时踢出功能 |
+| 47 | 第 16 章 10~11（广播两种解法 / 自测） | **把聊天室的解法 A 改成解法 B**（无锁广播） |
+| 48 | 第 17 章 1~5（SQL / B+ 树 / 聚簇索引 / 索引失效） | 手写 B+ 树的删除；用你的机器算一遍容量表 |
+| 49 | 第 17 章 6~11（事务 / MVCC / 锁 / 日志 / Buffer Pool / EXPLAIN） | 装一个 MySQL，亲手制造一次死锁并用 `SHOW ENGINE INNODB STATUS` 读懂它 |
+
+☆ 标记的是可跳过的挑战项。第 17 章与 C++ 部分独立，可以随时插入。
 
 ---
 
@@ -4640,7 +7604,7 @@ endif()
 
 ```bat
 scripts\build_vs.bat              :: 生成 .sln + 编译全部
-build\bin\ch01_cpp11.exe          :: 运行某一章
+build\bin\Debug\ch01_cpp11.exe          :: 运行某一章
 
 :: 或用 VS「打开文件夹」直接识别 CMakeLists.txt
 ```

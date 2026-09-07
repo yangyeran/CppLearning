@@ -4,11 +4,11 @@
 
 ```bash
 # 终端 1
-build\bin\ch09_tcp_server.exe 8888 thread
+build\bin\Debug\ch09_tcp_server.exe 8888 thread
 
 # 终端 2
-build\bin\ch09_tcp_client.exe 127.0.0.1 8888          # 交互模式
-build\bin\ch09_tcp_client.exe 127.0.0.1 8888 bench    # 粘包演示 + 压测
+build\bin\Debug\ch09_tcp_client.exe 127.0.0.1 8888          # 交互模式
+build\bin\Debug\ch09_tcp_client.exe 127.0.0.1 8888 bench    # 粘包演示 + 压测
 ```
 
 ---
@@ -288,8 +288,8 @@ HTTP/2 的多路复用、HTTP/3 的 0-RTT 握手，本质上都在解决这个�
 ▶ 对应程序：`ch10_udp_server` + `ch10_udp_client`
 
 ```bash
-build\bin\ch10_udp_server.exe 9999
-build\bin\ch10_udp_client.exe 127.0.0.1 9999 demo
+build\bin\Debug\ch10_udp_server.exe 9999
+build\bin\Debug\ch10_udp_client.exe 127.0.0.1 9999 demo
 ```
 
 ## 10.1 和 TCP 的编程差异
@@ -395,9 +395,9 @@ setsockopt(fd, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq));
 ▶ 对应程序：`ch11_multiplex`
 
 ```bash
-build\bin\ch11_multiplex.exe explain          # 只看原理讲解
-build\bin\ch11_multiplex.exe 8890 select      # 聊天室服务器（所有平台）
-build\bin\ch11_multiplex.exe 8890 poll
+build\bin\Debug\ch11_multiplex.exe explain          # 只看原理讲解
+build\bin\Debug\ch11_multiplex.exe 8890 select      # 聊天室服务器（所有平台）
+build\bin\Debug\ch11_multiplex.exe 8890 poll
 ./build-linux/bin/ch11_multiplex 8890 epoll   # 仅 Linux
 
 # 测试：开 2~3 个终端各跑 telnet 127.0.0.1 8890，随便打字会广播给其他人
@@ -663,7 +663,7 @@ if (n < (ssize_t)len) {
 ▶ 对应程序：`ch12_http_server`
 
 ```bash
-build\bin\ch12_http_server.exe 8080
+build\bin\Debug\ch12_http_server.exe 8080
 # 浏览器打开 http://127.0.0.1:8080
 curl http://127.0.0.1:8080/api/time
 curl -X POST -d "hello" http://127.0.0.1:8080/api/echo
