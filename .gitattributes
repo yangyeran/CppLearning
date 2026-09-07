@@ -1,0 +1,17 @@
+# 仓库内统一用 LF 存储，检出时按平台自动转换
+* text=auto eol=lf
+
+# Windows 批处理必须是 CRLF，否则 cmd 解析出错
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# 二进制文件不做任何转换
+*.pdf  binary
+*.png  binary
+*.jpg  binary
+*.exe  binary
+*.lib  binary
+*.pdb  binary
+
+# GitHub 语言统计：文档不计入
+docs/**  linguist-documentation
