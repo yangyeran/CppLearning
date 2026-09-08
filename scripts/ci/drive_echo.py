@@ -59,8 +59,7 @@ def ci_error(msg):
     这样即使拿不到完整日志（logs API 需要鉴权），也能通过公开的
     annotations API 看到具体失败原因。"""
     if os.environ.get("GITHUB_ACTIONS") == "true":
-        one_line = str(msg).replace("", " ").replace("
-", " ")[:900]
+        one_line = " ".join(str(msg).split())[:900]
         print(f"::error::[{TAG}] {one_line}", flush=True)
 
 
