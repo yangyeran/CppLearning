@@ -103,7 +103,7 @@ li>ul,li>ol{margin:.2em 0}
 </style>
 </head>
 <body>
-<div class="cover"><h1>C++ 复习与 Linux 网络编程</h1><p class="sub">完整学习手册 · 从语法回忆到手写 HTTP 服务器</p><p class="sub">配套工程：CppLearning（15 个可运行程序）</p><p class="meta">生成时间 2026-09-08 00:20</p></div>
+<div class="cover"><h1>C++ 复习与 Linux 网络编程</h1><p class="sub">完整学习手册 · 从语法回忆到手写 HTTP 服务器</p><p class="sub">配套工程：CppLearning（15 个可运行程序）</p><p class="meta">生成时间 2026-09-08 09:40</p></div>
 <nav id="doc-toc"><p>目录</p>
 <ul>
 <li><a href="#c-linux">C++ 复习与 Linux 网络编程 · 完整学习手册</a><ul>
@@ -630,34 +630,62 @@ li>ul,li>ol{margin:.2em 0}
 <li><a href="#_70">本章要点</a></li>
 </ul>
 </li>
+<li><a href="#1819">第 18~19 章 · 练习题参考答案</a><ul>
+<li><a href="#b1-stl">B.1 语法与 STL</a><ul>
+<li><a href="#1-safevectort">第 1 题 · SafeVector\&lt;T&gt;</a></li>
+<li><a href="#2-join">第 2 题 · join</a></li>
+<li><a href="#3-variant-json">第 3 题 · variant 实现 JSON</a></li>
+<li><a href="#4_1">第 4 题 · 概念约束的快排</a></li>
+<li><a href="#5-o1-lru">第 5 题 · O(1) LRU 缓存</a></li>
+</ul>
+</li>
+<li><a href="#b2">B.2 设计模式</a><ul>
+<li><a href="#6_2">第 6 题 · 线程安全事件总线</a></li>
+<li><a href="#7-anycallable">第 7 题 · 类型擦除的 AnyCallable</a></li>
+<li><a href="#8-handler">第 8 题 · Handler 装饰器</a></li>
+</ul>
+</li>
+<li><a href="#b3">B.3 网络编程</a><ul>
+<li><a href="#9_1">第 9 题 · 长度前缀协议</a></li>
+<li><a href="#10_1">第 10 题 · 定时器堆与超时踢出</a></li>
+<li><a href="#11_2">第 11 题 · 文件传输</a></li>
+<li><a href="#12-rpc">第 12 题 · 简易 RPC</a></li>
+<li><a href="#13-http">第 13 题 · HTTP 改事件驱动（☆）</a></li>
+<li><a href="#14-websocket">第 14 题 · WebSocket</a></li>
+<li><a href="#_71">附带实现的摘要算法</a></li>
+</ul>
+</li>
+<li><a href="#ci">关于 CI</a></li>
+</ul>
+</li>
 <li><a href="#a-4-3">附录 A · 复习计划（4 周主线 + 3 周进阶）</a><ul>
 <li><a href="#1_4">第 1 周：语法回炉</a></li>
 <li><a href="#2_4">第 2 周：现代特性 + 标准库</a></li>
 <li><a href="#3_1">第 3 周：设计模式 + 网络基础</a></li>
-<li><a href="#4_1">第 4 周：网络编程实战</a></li>
+<li><a href="#4_2">第 4 周：网络编程实战</a></li>
 <li><a href="#5_1">第 5 周：查漏补缺 + 智能指针</a></li>
 <li><a href="#6-stl_1">第 6 周：STL 源码</a></li>
 <li><a href="#7-reactor-mysql">第 7 周：Reactor + MySQL</a></li>
 </ul>
 </li>
 <li><a href="#b">附录 B · 练习题（由易到难）</a><ul>
-<li><a href="#b1-stl">B.1 语法与 STL</a></li>
-<li><a href="#b2">B.2 设计模式</a></li>
-<li><a href="#b3">B.3 网络编程</a></li>
+<li><a href="#b1-stl_1">B.1 语法与 STL</a></li>
+<li><a href="#b2_1">B.2 设计模式</a></li>
+<li><a href="#b3_1">B.3 网络编程</a></li>
 </ul>
 </li>
 <li><a href="#c">附录 C · 高频面试题清单</a></li>
 <li><a href="#d">附录 D · 推荐资源</a><ul>
-<li><a href="#_71">书</a></li>
-<li><a href="#_72">网站</a></li>
-<li><a href="#_73">视频 / 会议</a></li>
-<li><a href="#_74">开源项目（按学习难度排序）</a></li>
+<li><a href="#_72">书</a></li>
+<li><a href="#_73">网站</a></li>
+<li><a href="#_74">视频 / 会议</a></li>
+<li><a href="#_75">开源项目（按学习难度排序）</a></li>
 </ul>
 </li>
 <li><a href="#e">附录 E · 工程速查</a><ul>
-<li><a href="#_75">编译命令</a></li>
+<li><a href="#_76">编译命令</a></li>
 <li><a href="#cmake">CMake 最小模板</a></li>
-<li><a href="#_76">本工程的命令</a></li>
+<li><a href="#_77">本工程的命令</a></li>
 </ul>
 </li>
 </ul>
@@ -895,6 +923,18 @@ li>ul,li>ol{margin:.2em 0}
 <td><strong>MySQL 命令与原理</strong></td>
 <td><code>ch17_mysql</code></td>
 <td>命令速查 + 手写 B+树/MVCC/Buffer Pool</td>
+</tr>
+<tr>
+<td>18</td>
+<td><strong>练习题答案</strong>（语法/STL/模式）</td>
+<td><code>ch18_solutions</code></td>
+<td>附录 B 第 1~8 题，每题带自检</td>
+</tr>
+<tr>
+<td>19</td>
+<td><strong>练习题答案</strong>（网络）</td>
+<td><code>ch19_net_solutions</code></td>
+<td>附录 B 第 9~14 题，含 MD5/SHA-1/WebSocket</td>
 </tr>
 </tbody>
 </table>
@@ -8860,6 +8900,373 @@ name=&#39;v3&#39;                        name=&#39;v2&#39;            name=&#39;
 <li>Buffer Pool 的 <strong>young/old 分区</strong>专门防全表扫描污染缓存</li>
 <li>优化先看 <code>EXPLAIN</code> 的 <code>type</code> 和 <code>Extra</code>；<strong>加索引 &gt; 改写 SQL &gt; 改表结构 &gt; 加缓存分库</strong></li>
 </ol>
+<h1 id="1819">第 18~19 章 · 练习题参考答案</h1>
+<p>▶ 对应程序：<code>ch18_solutions</code>（第 1~8 题）、<code>ch19_net_solutions</code>（第 9~14 题）</p>
+<p>练习题本身在<strong>附录 B</strong>。这里讲每题的考点和易错处；完整代码在源文件里，每题都带自检，运行后能看到逐项通过情况。</p>
+<p>「参考答案」的意思是：这是一种可用的写法，不是唯一写法。每题都标了<strong>【常见错法】</strong>—— 那部分往往比答案本身更有价值。</p>
+<hr />
+<h2 id="b1-stl">B.1 语法与 STL</h2>
+<h3 id="1-safevectort">第 1 题 · SafeVector\&lt;T&gt;</h3>
+<p><strong>考点</strong>：组合优于继承、完美转发、五法则里的"只要移动不要拷贝"。</p>
+<div class="codehilite"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SafeVector</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">data_</span><span class="p">;</span><span class="w">          </span><span class="c1">// 组合，不是继承</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="n">SafeVector</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">SafeVector</span><span class="o">&amp;</span><span class="p">)</span><span class="w">            </span><span class="o">=</span><span class="w"> </span><span class="k">delete</span><span class="p">;</span><span class="w">   </span><span class="c1">// 这两行就是「不可拷贝」的全部实现</span>
+<span class="w">    </span><span class="n">SafeVector</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">SafeVector</span><span class="o">&amp;</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">delete</span><span class="p">;</span>
+<span class="w">    </span><span class="n">SafeVector</span><span class="p">(</span><span class="n">SafeVector</span><span class="o">&amp;&amp;</span><span class="p">)</span><span class="w"> </span><span class="k">noexcept</span><span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="k">default</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">T</span><span class="o">&amp;</span><span class="w">       </span><span class="k">operator</span><span class="p">[](</span><span class="n">size_type</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w">       </span><span class="p">{</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">data_</span><span class="p">.</span><span class="n">size</span><span class="p">())</span><span class="w"> </span><span class="n">throwOutOfRange</span><span class="p">(</span><span class="n">i</span><span class="p">);</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">data_</span><span class="p">[</span><span class="n">i</span><span class="p">];</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">T</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="p">[](</span><span class="n">size_type</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">data_</span><span class="p">.</span><span class="n">size</span><span class="p">())</span><span class="w"> </span><span class="n">throwOutOfRange</span><span class="p">(</span><span class="n">i</span><span class="p">);</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">data_</span><span class="p">[</span><span class="n">i</span><span class="p">];</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="p">...</span><span class="w"> </span><span class="n">Args</span><span class="o">&gt;</span>
+<span class="w">    </span><span class="n">T</span><span class="o">&amp;</span><span class="w"> </span><span class="n">emplace_back</span><span class="p">(</span><span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">data_</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">forward</span><span class="o">&lt;</span><span class="n">Args</span><span class="o">&gt;</span><span class="p">(</span><span class="n">args</span><span class="p">)...);</span><span class="w"> </span><span class="p">}</span>
+<span class="p">};</span>
+</code></pre></div>
+
+<p><strong>常见错法</strong>：</p>
+<ul>
+<li>❌ <strong>继承 <code>std::vector&lt;T&gt;</code></strong>。标准容器的析构函数不是 <code>virtual</code>，通过基类指针删除派生对象是 UB（第 13 章 3.1），而且会继承到一堆你不想暴露的接口</li>
+<li>❌ 只写非 const 版本的 <code>operator[]</code> → const 对象上没法读</li>
+<li>❌ <code>emplace_back(Args... args)</code> 按值接参 → 多一次拷贝</li>
+</ul>
+<p>只要提供了 <code>begin()</code>/<code>end()</code>，标准算法就直接可用 —— <code>std::sort(v.begin(), v.end())</code> 无需任何额外适配。这就是第 15 章讲的迭代器解耦的好处。</p>
+<h3 id="2-join">第 2 题 · join</h3>
+<p><strong>考点</strong>：折叠表达式、<code>sizeof...</code> 处理"最后一个不加分隔符"。</p>
+<p>两种写法：</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">// 写法 A：折叠 + 索引计数</span>
+<span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="p">...</span><span class="w"> </span><span class="n">Ts</span><span class="o">&gt;</span>
+<span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">join</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">sep</span><span class="p">,</span><span class="w"> </span><span class="n">Ts</span><span class="o">&amp;&amp;</span><span class="p">...</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">ostringstream</span><span class="w"> </span><span class="n">oss</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="w"> </span><span class="n">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="k">constexpr</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="w"> </span><span class="n">count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">sizeof</span><span class="p">...(</span><span class="n">Ts</span><span class="p">);</span>
+<span class="w">    </span><span class="p">((</span><span class="n">oss</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">forward</span><span class="o">&lt;</span><span class="n">Ts</span><span class="o">&gt;</span><span class="p">(</span><span class="n">args</span><span class="p">),</span><span class="w"> </span><span class="p">(</span><span class="o">++</span><span class="n">index</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">count</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">oss</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">sep</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">oss</span><span class="p">)),</span><span class="w"> </span><span class="p">...);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">oss</span><span class="p">.</span><span class="n">str</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="c1">// 写法 B：分隔符加在「除第一个之外」的每个元素前面</span>
+<span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">First</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="p">...</span><span class="w"> </span><span class="n">Rest</span><span class="o">&gt;</span>
+<span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">join2</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">sep</span><span class="p">,</span><span class="w"> </span><span class="n">First</span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">first</span><span class="p">,</span><span class="w"> </span><span class="n">Rest</span><span class="o">&amp;&amp;</span><span class="p">...</span><span class="w"> </span><span class="n">rest</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">ostringstream</span><span class="w"> </span><span class="n">oss</span><span class="p">;</span>
+<span class="w">    </span><span class="n">oss</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">forward</span><span class="o">&lt;</span><span class="n">First</span><span class="o">&gt;</span><span class="p">(</span><span class="n">first</span><span class="p">);</span>
+<span class="w">    </span><span class="p">((</span><span class="n">oss</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">sep</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">forward</span><span class="o">&lt;</span><span class="n">Rest</span><span class="o">&gt;</span><span class="p">(</span><span class="n">rest</span><span class="p">)),</span><span class="w"> </span><span class="p">...);</span><span class="w">   </span><span class="c1">// 空包时整个折叠为空</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">oss</span><span class="p">.</span><span class="n">str</span><span class="p">();</span>
+<span class="p">}</span>
+<span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">join2</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="p">{};</span><span class="w"> </span><span class="p">}</span><span class="w">   </span><span class="c1">// 零参数重载</span>
+</code></pre></div>
+
+<p><strong>常见错法</strong>：</p>
+<ul>
+<li>❌ 每个元素后面都加分隔符再 pop 掉最后一个 → <strong>空参数包时崩溃</strong></li>
+<li>❌ 用 <code>std::string</code> 累加 → O(n²) 拷贝，用 <code>ostringstream</code> 更合适</li>
+<li>❌ 用递归展开（能做，但代码长、编译慢）</li>
+</ul>
+<h3 id="3-variant-json">第 3 题 · variant 实现 JSON</h3>
+<p><strong>考点</strong>：<code>variant</code> 里怎么放<strong>递归类型</strong>。</p>
+<p>这是本题唯一的难点。直接写编译不过：</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">// ❌ 编译错误：Json 在定义自己的时候还不完整</span>
+<span class="k">using</span><span class="w"> </span><span class="n">Json</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">variant</span><span class="o">&lt;</span><span class="p">...,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Json</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span><span class="w"> </span><span class="n">Json</span><span class="o">&gt;&gt;</span><span class="p">;</span>
+</code></pre></div>
+
+<p>解法是前置声明 + 包一层：</p>
+<div class="codehilite"><pre><span></span><code><span class="k">struct</span><span class="w"> </span><span class="nc">Json</span><span class="p">;</span><span class="w">                        </span><span class="c1">// 此时是不完整类型</span>
+
+<span class="k">using</span><span class="w"> </span><span class="n">JsonValue</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">variant</span><span class="o">&lt;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">nullptr_t</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Json</span><span class="o">&gt;</span><span class="p">,</span><span class="w">                    </span><span class="c1">// vector 允许元素是不完整类型</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span><span class="w"> </span><span class="n">Json</span><span class="o">&gt;</span><span class="w">           </span><span class="c1">// map 同上（C++17 起标准明确保证这两个）</span>
+<span class="o">&gt;</span><span class="p">;</span>
+
+<span class="k">struct</span><span class="w"> </span><span class="nc">Json</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">JsonValue</span><span class="w"> </span><span class="n">v</span><span class="p">;</span><span class="w"> </span><span class="p">};</span>
+</code></pre></div>
+
+<p>序列化用 <code>std::visit</code> + <code>overloaded</code> 惯用法，递归处理数组和对象。</p>
+<p>两个容易忘的细节：</p>
+<ul>
+<li><strong>字符串必须转义</strong> <code>"</code> <code>\</code> 和控制字符，否则输出的不是合法 JSON</li>
+<li><strong>整数值的 double 要输出成整数形态</strong>：<code>3.0</code> 应该输出 <code>3</code> 而不是 <code>3.000000</code></li>
+</ul>
+<h3 id="4_1">第 4 题 · 概念约束的快排</h3>
+<p><strong>考点</strong>：C++20 concepts 约束算法 + 快排的三个工程细节。</p>
+<div class="codehilite"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">random_access_iterator</span><span class="w"> </span><span class="n">It</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Comp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">ranges</span><span class="o">::</span><span class="n">less</span><span class="o">&gt;</span>
+<span class="w">    </span><span class="k">requires</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">sortable</span><span class="o">&lt;</span><span class="n">It</span><span class="p">,</span><span class="w"> </span><span class="n">Comp</span><span class="o">&gt;</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">my_quick_sort</span><span class="p">(</span><span class="n">It</span><span class="w"> </span><span class="n">first</span><span class="p">,</span><span class="w"> </span><span class="n">It</span><span class="w"> </span><span class="n">last</span><span class="p">,</span><span class="w"> </span><span class="n">Comp</span><span class="w"> </span><span class="n">comp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{});</span>
+</code></pre></div>
+
+<p>三个细节缺一不可（这也是第 15 章 introsort 那节讲过的）：</p>
+<ol>
+<li><strong>三点取中选 pivot</strong> —— 直接取首元素的话，有序输入会退化成 O(n²)</li>
+<li><strong>小区间（≤16）切插入排序</strong> —— 元素少时它更快，且对"几乎有序"极快</li>
+<li><strong>只递归较小的一半，循环处理较大的一半</strong> —— 栈深度从最坏 O(n) 降到 O(log n)</li>
+</ol>
+<p>自检里专门测了三种最坏输入：已排序、完全逆序、大量重复值。第三种最容易让分区逻辑死循环。</p>
+<p><strong>concept 的实际价值</strong>：传 <code>std::list</code> 的迭代器进去，报的是"不满足 <code>random_access_iterator</code>"一行人话，而不是几百行模板实例化错误。</p>
+<h3 id="5-o1-lru">第 5 题 · O(1) LRU 缓存</h3>
+<p><strong>考点</strong>：<code>std::list</code> + <code>std::unordered_map</code> 的组合。</p>
+<div class="codehilite"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">list</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">pair</span><span class="o">&lt;</span><span class="n">K</span><span class="p">,</span><span class="w"> </span><span class="n">V</span><span class="o">&gt;&gt;</span><span class="w">                                  </span><span class="n">order_</span><span class="p">;</span><span class="w">   </span><span class="c1">// 队首 = 最近使用</span>
+<span class="n">std</span><span class="o">::</span><span class="n">unordered_map</span><span class="o">&lt;</span><span class="n">K</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">std</span><span class="o">::</span><span class="n">list</span><span class="o">&lt;</span><span class="n">Entry</span><span class="o">&gt;::</span><span class="n">iterator</span><span class="o">&gt;</span><span class="w">  </span><span class="n">index_</span><span class="p">;</span>
+</code></pre></div>
+
+<p><code>get</code> 命中后用 <code>splice</code> 把节点移到队首：</p>
+<div class="codehilite"><pre><span></span><code><span class="n">order_</span><span class="p">.</span><span class="n">splice</span><span class="p">(</span><span class="n">order_</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="w"> </span><span class="n">order_</span><span class="p">,</span><span class="w"> </span><span class="n">it</span><span class="o">-&gt;</span><span class="n">second</span><span class="p">);</span><span class="w">   </span><span class="c1">// O(1)，且迭代器保持有效</span>
+</code></pre></div>
+
+<p><strong>这是全书唯一一个"<code>list</code> 明显优于 <code>vector</code>"的场景</strong>：<code>splice</code> 是 O(1) 且<strong>不使迭代器失效</strong>，所以 map 里存的迭代器在无数次重排后依然有效。换成 <code>vector</code> 或 <code>deque</code> 都做不到（第 15 章 6）。</p>
+<p><strong>常见错法</strong>：</p>
+<ul>
+<li>❌ 用 <code>vector</code> 存访问顺序 → 移到队首是 O(n)</li>
+<li>❌ map 里存下标而不是迭代器 → 链表变动后下标全错</li>
+<li>❌ <strong>淘汰时忘了从 map 里也删掉</strong> → map 无限增长（这就是内存泄漏）</li>
+<li>❌ <code>get</code> 命中后忘记更新顺序 → 退化成 FIFO，不是 LRU</li>
+</ul>
+<p>自检里跑了 20 万次 <code>put</code>/<code>get</code>，验证容量恒定（淘汰正常）且耗时线性（单次真的是 O(1)）。</p>
+<hr />
+<h2 id="b2">B.2 设计模式</h2>
+<h3 id="6_2">第 6 题 · 线程安全事件总线</h3>
+<p><strong>考点</strong>：<code>type_index</code> 按类型分发 + <code>weak_ptr</code> 观察者 + 不持锁调用外部代码。</p>
+<p>三个设计要点：</p>
+<p><strong>1. 用 <code>std::type_index</code> 做 key</strong>，不要用 <code>typeid(E).name()</code></p>
+<p><code>name()</code> 的格式跨编译器不同，而且理论上可能重名。<code>type_index</code> 包装了 <code>type_info</code>，可哈希可比较，跨编译器行为稳定。</p>
+<p><strong>2. 持锁只拷贝订阅者列表，调用 handler 时不持锁</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">pair</span><span class="o">&lt;</span><span class="n">Id</span><span class="p">,</span><span class="w"> </span><span class="n">HandlerFn</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">snapshot</span><span class="p">;</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_lock</span><span class="w"> </span><span class="nf">lk</span><span class="p">(</span><span class="n">mutex_</span><span class="p">);</span>
+<span class="w">    </span><span class="n">snapshot</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">handlers_</span><span class="p">[</span><span class="n">type</span><span class="p">];</span><span class="w">      </span><span class="c1">// 拷一份</span>
+<span class="p">}</span><span class="w">                                     </span><span class="c1">// 锁在这里释放</span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="p">[</span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">fn</span><span class="p">]</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">snapshot</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">fn</span><span class="p">(</span><span class="o">&amp;</span><span class="n">event</span><span class="p">))</span><span class="w"> </span><span class="n">dead</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">id</span><span class="p">);</span><span class="w">   </span><span class="c1">// 不持锁调用</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>持锁调用的话，handler 里再 <code>subscribe</code>/<code>publish</code> 就自己死锁了。自检里专门有一项验证这个可重入性。<strong>"不要在持锁时调用外部代码"是并发编程的通用铁律</strong>（第 13 章 5.3、第 16 章 10 都在讲同一件事）。</p>
+<p><strong>3. handler 返回 <code>bool</code> 表示自己是否还有效</strong></p>
+<p>订阅者用 <code>weak_ptr</code> 持有。<code>lock()</code> 失败就返回 <code>false</code>，总线在本轮 publish 之后统一回收。这样订阅者对象销毁后不需要手动退订。</p>
+<p><strong>常见错法</strong>：</p>
+<ul>
+<li>❌ 用 <code>shared_ptr</code> 持有订阅者 → 订阅者永远不释放</li>
+<li>❌ 只在 publish 时清理 → 从不 publish 的事件类型会无限累积失效订阅</li>
+</ul>
+<h3 id="7-anycallable">第 7 题 · 类型擦除的 AnyCallable</h3>
+<p><strong>考点</strong>：类型擦除的标准结构。</p>
+<div class="codehilite"><pre><span></span><code><span class="k">struct</span><span class="w"> </span><span class="nc">Concept</span><span class="w"> </span><span class="p">{</span><span class="w">                                          </span><span class="c1">// 抽象接口</span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">Concept</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">default</span><span class="p">;</span><span class="w">                         </span><span class="c1">// 必须 virtual</span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="n">R</span><span class="w"> </span><span class="nf">invoke</span><span class="p">(</span><span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Concept</span><span class="o">&gt;</span><span class="w"> </span><span class="n">clone</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w">    </span><span class="c1">// 支持拷贝的关键</span>
+<span class="p">};</span>
+
+<span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">F</span><span class="o">&gt;</span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">Model</span><span class="w"> </span><span class="k">final</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Concept</span><span class="w"> </span><span class="p">{</span><span class="w">                            </span><span class="c1">// 每个 F 一份具体实现</span>
+<span class="w">    </span><span class="n">F</span><span class="w"> </span><span class="n">fn</span><span class="p">;</span>
+<span class="w">    </span><span class="n">R</span><span class="w"> </span><span class="nf">invoke</span><span class="p">(</span><span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">fn</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">forward</span><span class="o">&lt;</span><span class="n">Args</span><span class="o">&gt;</span><span class="p">(</span><span class="n">args</span><span class="p">)...);</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Concept</span><span class="o">&gt;</span><span class="w"> </span><span class="n">clone</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">Model</span><span class="o">&gt;</span><span class="p">(</span><span class="n">fn</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="p">};</span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Concept</span><span class="o">&gt;</span><span class="w"> </span><span class="n">impl_</span><span class="p">;</span><span class="w">                           </span><span class="c1">// 持有基类指针</span>
+</code></pre></div>
+
+<p><strong>三件套：virtual 析构、invoke、clone。</strong> 少了 clone 就没法支持拷贝（<code>unique_ptr</code> 不可拷贝）。</p>
+<p><strong>一个真实踩到的坑</strong>：构造函数的类型变换必须用 <code>std::decay_t</code>，不能用 <code>std::remove_cvref_t</code>：</p>
+<div class="codehilite"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">F</span><span class="o">&gt;</span>
+<span class="w">    </span><span class="k">requires</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">is_invocable_r_v</span><span class="o">&lt;</span><span class="n">R</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">decay_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;&amp;</span><span class="p">,</span><span class="w"> </span><span class="n">Args</span><span class="p">...</span><span class="o">&gt;</span>
+<span class="n">AnyCallable</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">f</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">impl_</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">Model</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">decay_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;&gt;&gt;</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">forward</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;</span><span class="p">(</span><span class="n">f</span><span class="p">)))</span><span class="w"> </span><span class="p">{}</span>
+</code></pre></div>
+
+<p>传自由函数时 <code>F</code> 推导为 <code>int(&amp;)(int)</code>，<code>remove_cvref_t</code> 得到的是<strong>函数类型</strong> <code>int(int)</code> —— 而类的成员不能是函数类型（MSVC 报 C2207）。<code>decay_t</code> 会把函数衰减成函数指针，这正是"按值存一份"需要的语义。</p>
+<p><strong>与 <code>std::function</code> 的差异</strong>：本实现每次都堆分配；标准库有<strong>小对象优化（SBO）</strong>，小的可调用对象直接存在对象内部。想加 SBO 就在类里放一个 <code>alignas</code> 的 char buffer，<code>sizeof(F)</code> 足够小时 placement new 进去。</p>
+<h3 id="8-handler">第 8 题 · Handler 装饰器</h3>
+<p><strong>考点</strong>：装饰器模式的函数式写法。</p>
+<p>关键是<strong>装饰器的签名必须是 <code>Handler -&gt; Handler</code></strong>，这保证了可以无限叠加：</p>
+<div class="codehilite"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">Handler</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="n">HttpResponse</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">HttpRequest</span><span class="o">&amp;</span><span class="p">)</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="k">using</span><span class="w"> </span><span class="n">Decorator</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="n">Handler</span><span class="p">(</span><span class="n">Handler</span><span class="p">)</span><span class="o">&gt;</span><span class="p">;</span>
+
+<span class="n">Decorator</span><span class="w"> </span><span class="nf">withTiming</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;*</span><span class="w"> </span><span class="n">log</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">[</span><span class="n">log</span><span class="p">](</span><span class="n">Handler</span><span class="w"> </span><span class="n">next</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">Handler</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="p">[</span><span class="n">next</span><span class="p">,</span><span class="w"> </span><span class="n">log</span><span class="p">](</span><span class="k">const</span><span class="w"> </span><span class="n">HttpRequest</span><span class="o">&amp;</span><span class="w"> </span><span class="n">req</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">HttpResponse</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">auto</span><span class="w"> </span><span class="n">t0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">steady_clock</span><span class="o">::</span><span class="n">now</span><span class="p">();</span><span class="w">     </span><span class="c1">// 测耗时必须用 steady_clock</span>
+<span class="w">            </span><span class="n">HttpResponse</span><span class="w"> </span><span class="n">resp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">next</span><span class="p">(</span><span class="n">req</span><span class="p">);</span>
+<span class="w">            </span><span class="n">resp</span><span class="p">.</span><span class="n">headers</span><span class="p">[</span><span class="s">&quot;X-Elapsed-Us&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">...;</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">resp</span><span class="p">;</span>
+<span class="w">        </span><span class="p">};</span>
+<span class="w">    </span><span class="p">};</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p><strong>顺序决定语义</strong>：</p>
+<ul>
+<li><code>{withErrorHandling, withTiming}</code> → 异常在外层，能捕获计时器内的异常，但计时不包含异常处理本身</li>
+<li><code>{withTiming, withErrorHandling}</code> → 计时在外层，能测到异常处理的耗时，但异常若从计时器抛出就没人管了</li>
+</ul>
+<p>一般把「异常处理」和「日志」放最外层，「鉴权」「限流」放中层，业务在最内。这和第 16 章 HTTP 中间件是同一个思路。</p>
+<p><strong>常见错法</strong>：</p>
+<ul>
+<li>❌ 用继承做装饰 → 每加一种装饰就要一个类，且无法动态组合</li>
+<li>❌ 装饰器改变了函数签名 → 无法叠加</li>
+<li>❌ 计时用 <code>system_clock</code> → 它会被 NTP 调整</li>
+</ul>
+<hr />
+<h2 id="b3">B.3 网络编程</h2>
+<p>第 11、12 题的服务端<strong>直接用第 16 章的 Reactor 库</strong>实现 —— 既是答案，也顺便证明那个库真的能用来干活。</p>
+<h3 id="9_1">第 9 题 · 长度前缀协议</h3>
+<p><strong>考点不是编码，而是解码器必须可重入。</strong></p>
+<p>协议 <code>[4 字节大端长度][消息体]</code> 本身很简单。真正的考点是：<strong>每次只喂进来几个字节也要能正确工作</strong>，因为 4 字节的长度头本身也会被 TCP 拆开。</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="nf">feed</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="w"> </span><span class="n">len</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">MessageCallback</span><span class="o">&amp;</span><span class="w"> </span><span class="n">onMessage</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">buffer_</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">len</span><span class="p">);</span>
+<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="nb">true</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">                                    </span><span class="c1">// while 而不是 if</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">buffer_</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">4</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w">          </span><span class="c1">// 连长度字段都不完整</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">bodyLen</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">::</span><span class="n">ntohl</span><span class="p">(</span><span class="n">读出前</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="n">字节</span><span class="p">);</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">bodyLen</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">maxLength_</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w">       </span><span class="c1">// 内存炸弹防护</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">buffer_</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">bodyLen</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w"> </span><span class="c1">// 消息体还没收全</span>
+<span class="w">        </span><span class="n">onMessage</span><span class="p">(</span><span class="n">取出这一条</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p><strong>常见错法</strong>：</p>
+<ul>
+<li>❌ 假设一次 <code>recv</code> 就能拿到完整的 4 字节头</li>
+<li>❌ <strong>不校验长度上限</strong> → 对方发一个 <code>0xFFFFFFFF</code>，你就去 <code>resize</code> 4 GB</li>
+<li>❌ 用主机字节序写长度 → 跨平台/跨语言立刻出错</li>
+<li>❌ 解出一条消息就 <code>return</code> → 粘包时剩下的消息要等下一次事件才处理，延迟翻倍</li>
+</ul>
+<p>自检覆盖：逐字节喂入、3 条粘包、切在消息中间、空消息体、4 GB 长度攻击、500 条消息以随机 1~64 字节分片喂入。</p>
+<h3 id="10_1">第 10 题 · 定时器堆与超时踢出</h3>
+<p><strong>考点</strong>：小顶堆 + <code>steady_clock</code> + 超时值怎么喂给 <code>poll</code>。</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="nf">nextTimeoutMs</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">defaultMs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">10000</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">heap_</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">defaultMs</span><span class="p">;</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">remain</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">...(</span><span class="n">heap_</span><span class="p">.</span><span class="n">top</span><span class="p">().</span><span class="n">when</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">Clock</span><span class="o">::</span><span class="n">now</span><span class="p">());</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">remain</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w">        </span><span class="c1">// 已过期 -&gt; 返回 0，让 poll 立刻返回</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">min</span><span class="p">(</span><span class="n">remain</span><span class="p">,</span><span class="w"> </span><span class="n">defaultMs</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p><strong>两个必踩的坑</strong>：</p>
+<ol>
+<li><strong>必须用 <code>steady_clock</code></strong>。<code>system_clock</code> 会被 NTP 或用户改时间往回调，一次校时就能让所有定时器失效或提前触发</li>
+<li><strong>已过期要返回 0 而不是负数</strong> —— 负数在 <code>poll</code> 里表示"无限等待"，会把整个事件循环挂死</li>
+</ol>
+<p><code>std::priority_queue</code> 不支持删除中间元素，所以取消用<strong>惰性删除</strong>：记下 id，弹出时检查并跳过。</p>
+<p>还有一个细节：<code>tick()</code> 必须<strong>先把到期项全部取出，再逐个调用回调</strong>。因为回调里可能再 <code>addTimer</code>（周期性心跳的标准写法），边遍历边加会陷入死循环。</p>
+<p><strong>实战部分</strong>用 Reactor 库搭了一个"800ms 没消息就踢下线"的服务器，验证持续活跃的连接不被踢、沉默的连接被踢。注意那里的 <code>lastActive</code> map <strong>不需要加锁</strong> —— 连接归属单一 loop 线程，这是 one loop per thread 的直接收益。</p>
+<h3 id="11_2">第 11 题 · 文件传输</h3>
+<p><strong>考点</strong>：64 位 offset、断点续传、整文件校验。</p>
+<p>协议：</p>
+<div class="codehilite"><pre><span></span><code>请求：  &quot;GET\0&lt;文件名&gt;\0&lt;8字节起始offset(大端)&gt;&quot;
+响应头：&quot;OK\0&lt;8字节文件总长(大端)&gt;&lt;32字节MD5十六进制&gt;&quot;
+之后：  从 offset 开始的原始字节流
+</code></pre></div>
+
+<p><strong>三个必踩的坑</strong>：</p>
+<ol>
+<li><strong>offset 必须用 <code>uint64_t</code>/<code>int64_t</code></strong>。Windows 上 <code>long</code> 是 32 位，用它做 offset 在 2 GB 处<strong>静默溢出</strong>。自检专门测了 <code>0x7FFFFFFF</code>、<code>0x80000000</code>、<code>0xFFFFFFFF</code>、<code>0x100000000</code>、<code>0xFFFFFFFFFF</code> 五个边界值的编解码往返</li>
+<li><code>seekg</code> 的参数类型是 <code>std::streamoff</code>，别传 <code>int</code></li>
+<li><strong>别把整个文件读进内存再 send</strong>。应该配合 <code>WriteCompleteCallback</code> 分块发：发完一块才读下一块，这样内存占用恒定</li>
+</ol>
+<p>还有一个<strong>协议切换的陷阱</strong>，客户端侧很容易中招：响应先是一条长度前缀的头，之后是裸字节流。所以头必须<strong>精确读取</strong>（4 字节长度 + 恰好那么多字节），<strong>不能用 <code>LengthPrefixCodec</code></strong> —— 它会把头之后的文件字节当成"下一条消息"缓存起来，导致文件少一截，最后 MD5 校验失败。</p>
+<p>HTTP 的 chunked → raw、WebSocket 的 Upgrade 都有同样的问题：<strong>同一连接上协议中途切换时，前一个解码器的残留缓冲必须交还给后一个处理者</strong>。</p>
+<p>自检流程：下载 1 MB 后主动断开 → 从断点续传 → 校验最终文件大小和 MD5 与源文件完全一致。</p>
+<h3 id="12-rpc">第 12 题 · 简易 RPC</h3>
+<p><strong>考点</strong>：请求 ID 为什么必需。</p>
+<p>协议：<code>[4 字节长度][4 字节请求ID][方法名\0][参数]</code></p>
+<p>客户端可以并发发出多个请求，而服务端<strong>不保证按顺序回复</strong>（方法 A 慢、方法 B 快，B 的响应会先到）。靠请求 ID 才能把响应匹配到正确的调用方。<strong>这就是 RPC 与"一问一答"协议的本质区别。</strong></p>
+<p>自检里专门构造了这个场景：先发一个耗时 120ms 的 <code>slow</code>，紧接着发 3 个瞬时的 <code>echo</code>。响应必然乱序返回，但每个都能靠 ID 对上号。</p>
+<p>服务端用第 16 章的 Reactor 库，每个连接一个独立的 <code>LengthPrefixCodec</code> 挂在 <code>context</code> 上：</p>
+<div class="codehilite"><pre><span></span><code><span class="n">server</span><span class="p">.</span><span class="n">setConnectionCallback</span><span class="p">([](</span><span class="k">const</span><span class="w"> </span><span class="n">TcpConnectionPtr</span><span class="o">&amp;</span><span class="w"> </span><span class="n">c</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">c</span><span class="o">-&gt;</span><span class="n">connected</span><span class="p">())</span><span class="w"> </span><span class="n">c</span><span class="o">-&gt;</span><span class="n">setContext</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">LengthPrefixCodec</span><span class="o">&gt;</span><span class="p">());</span>
+<span class="p">});</span>
+<span class="n">server</span><span class="p">.</span><span class="n">setMessageCallback</span><span class="p">([</span><span class="k">this</span><span class="p">](</span><span class="k">const</span><span class="w"> </span><span class="n">TcpConnectionPtr</span><span class="o">&amp;</span><span class="w"> </span><span class="n">c</span><span class="p">,</span><span class="w"> </span><span class="n">Buffer</span><span class="o">*</span><span class="w"> </span><span class="n">buf</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">codec</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">c</span><span class="o">-&gt;</span><span class="n">context</span><span class="o">&lt;</span><span class="n">LengthPrefixCodec</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">codec</span><span class="o">-&gt;</span><span class="n">feed</span><span class="p">(</span><span class="n">buf</span><span class="o">-&gt;</span><span class="n">retrieveAllAsString</span><span class="p">(),</span><span class="w"> </span><span class="p">[</span><span class="o">&amp;</span><span class="p">](</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">body</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">handleOne</span><span class="p">(</span><span class="n">c</span><span class="p">,</span><span class="w"> </span><span class="n">body</span><span class="p">);</span><span class="w"> </span><span class="p">}))</span>
+<span class="w">        </span><span class="n">c</span><span class="o">-&gt;</span><span class="n">forceClose</span><span class="p">();</span><span class="w">                              </span><span class="c1">// 协议错误</span>
+<span class="p">});</span>
+</code></pre></div>
+
+<p>连接归属单一 loop 线程，所以这个 codec <strong>不需要加锁</strong>。</p>
+<p>自检最后跑了 8 客户端 × 50 次调用 = 400 次并发调用，全部正确匹配。</p>
+<h3 id="13-http">第 13 题 · HTTP 改事件驱动（☆）</h3>
+<p><strong>这题的答案就是第 16 章本身。</strong> 改造清单：</p>
+<ol>
+<li>所有 fd 设为非阻塞</li>
+<li>每连接一个应用层<strong>读</strong>缓冲（<code>Buffer</code> + <code>readv</code> + 栈上 extrabuf）</li>
+<li>每连接一个应用层<strong>写</strong>缓冲（<code>outputBuffer_</code> + <code>enableWriting()</code>）</li>
+<li><strong>写完立刻 <code>disableWriting()</code></strong>，否则 LT 模式 CPU 打满</li>
+<li>HTTP 解析器必须可重入</li>
+<li>连接生命周期用 <code>shared_ptr</code> + <code>Channel::tie</code></li>
+</ol>
+<p>第 3、4 条是本题的真正难点（题面也这么说）。还要注意 <code>sendInLoop</code> 里"输出缓冲区非空时必须排队，不能直接写"这个<strong>保序判断</strong> —— 漏了它会导致数据顺序错乱。</p>
+<h3 id="14-websocket">第 14 题 · WebSocket</h3>
+<p><strong>握手</strong>：<code>accept = base64(SHA1(key + "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"))</code></p>
+<p>自检用的是 RFC 6455 第 1.3 节的官方示例：key <code>dGhlIHNhbXBsZSBub25jZQ==</code> → accept <code>s3pPLMBiTxaQ9kYGzzhZRbK+xOo=</code>。</p>
+<p><strong>帧格式</strong>的三个硬规则：</p>
+<ol>
+<li><strong>客户端发的帧必须掩码，服务端发的必须不掩码。</strong> 服务端收到未掩码帧要以 1002（协议错误）关闭连接</li>
+<li><strong>长度是变长编码</strong>：0~125 直接放；126 表示后跟 2 字节；127 表示后跟 8 字节。自检测了 0/125/126/1000/65535/65536/200000 七个值，覆盖三条编码路径</li>
+<li><strong>FIN=0 表示分片</strong>，后续帧的 opcode 必须是 0（continuation）</li>
+</ol>
+<p>两个"为什么"，理解了就不会记错：</p>
+<ul>
+<li><strong>掩码不是加密</strong>（密钥就在帧里明文传）。它的目的是防止恶意 JS 构造出能欺骗中间代理的字节序列（缓存投毒）</li>
+<li><strong>魔数 GUID 同理</strong> —— 不为安全（谁都知道它），只为确认对端真的实现了 WebSocket，而不是某个傻转发的代理</li>
+</ul>
+<p>解码器和第 9 题一样必须可重入。自检验证了截断到 0/1/2/5/9/n-1 字节时都正确返回 <code>NeedMore</code> 而不是崩溃。</p>
+<h3 id="_71">附带实现的摘要算法</h3>
+<p>C++ 标准库<strong>没有</strong>任何加密摘要算法，所以第 11、14 题需要自己实现 MD5、SHA-1、Base64。三者都对着标准测试向量验证：</p>
+<table>
+<thead>
+<tr>
+<th>算法</th>
+<th>测试向量来源</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MD5</td>
+<td>RFC 1321 附录 A.5（6 组）+ 分块喂入一致性</td>
+</tr>
+<tr>
+<td>SHA-1</td>
+<td>RFC 3174（3 组）</td>
+</tr>
+<tr>
+<td>Base64</td>
+<td>RFC 4648 第 10 节（7 组）+ 解码往返</td>
+</tr>
+</tbody>
+</table>
+<p><strong>一个易错的差异</strong>：MD5 的长度字段是<strong>小端</strong>，SHA-1 是<strong>大端</strong>；两者读入 32 位字的字节序也相反。照着一个改另一个，这里最容易出错。</p>
+<blockquote>
+<p>生产环境请用 OpenSSL / libsodium。这里的实现没有做侧信道防护，且 MD5/SHA-1 早已不适合安全用途（碰撞攻击已实用化）。用它们做<strong>完整性校验</strong>仍然可以 —— 本章就是这个用途。</p>
+</blockquote>
+<hr />
+<h2 id="ci">关于 CI</h2>
+<p>这两章（以及全部 19 章）都跑在 GitHub Actions 上，配置见 <code>.github/workflows/ci.yml</code>：</p>
+<table>
+<thead>
+<tr>
+<th>Job</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Linux · gcc/clang · Debug/Release</td>
+<td>编译 + 运行全部章节 + 驱动 select/poll/<strong>epoll</strong> 三种模式</td>
+</tr>
+<tr>
+<td>Linux · Clang · ASan+UBSan</td>
+<td>内存错误与未定义行为检查</td>
+</tr>
+<tr>
+<td>Windows · MSVC · Debug/Release</td>
+<td>验证 Winsock 兼容层</td>
+</tr>
+<tr>
+<td>文档生成</td>
+<td>确认 PDF 能重新生成且章节齐全</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Linux job 的首要价值是验证 epoll。</strong> <code>EpollPoller</code>、<code>eventfd</code>、<code>readv</code>、<code>SO_REUSEPORT</code> 这些代码路径在 Windows 上连编译都不会发生 —— 只有 CI 能证明它们真的可用。CI 里有一步专门 grep 服务器日志里的 <code>Poller = epoll</code>，确认没有静默回退到 <code>PollPoller</code>。</p>
+<p><strong>Sanitizer job 有个值得一提的细节</strong>：第 13、14 章是「反面教材」章节，代码里刻意保留了真实的内存错误（非虚析构基类删除、<code>shared_ptr</code> 循环引用泄漏）。所以这两章单独放宽 <code>detect_leaks</code> 和 <code>new_delete_type_mismatch</code> 两项，其余检查全开 —— 如果它们有<strong>非故意</strong>的错误，照样会被抓出来。</p>
 <h1 id="a-4-3">附录 A · 复习计划（4 周主线 + 3 周进阶）</h1>
 <p>按每天 2~3 小时估算。赶时间就跳过标 ☆ 的部分。</p>
 <h2 id="1_4">第 1 周：语法回炉</h2>
@@ -9003,7 +9410,7 @@ name=&#39;v3&#39;                        name=&#39;v2&#39;            name=&#39;
 </tr>
 </tbody>
 </table>
-<h2 id="4_1">第 4 周：网络编程实战</h2>
+<h2 id="4_2">第 4 周：网络编程实战</h2>
 <table>
 <thead>
 <tr>
@@ -9196,7 +9603,12 @@ name=&#39;v3&#39;                        name=&#39;v2&#39;            name=&#39;
 <p>☆ 标记的是可跳过的挑战项。第 17 章与 C++ 部分独立，可以随时插入。</p>
 <hr />
 <h1 id="b">附录 B · 练习题（由易到难）</h1>
-<h2 id="b1-stl">B.1 语法与 STL</h2>
+<blockquote>
+<p>参考答案见<strong>第 18、19 章</strong>（可运行程序 <code>ch18_solutions</code> / <code>ch19_net_solutions</code>，
+每题都带自检）。建议先自己写一遍再对照 —— 答案里的
+【常见错法】部分往往比答案本身更有价值。</p>
+</blockquote>
+<h2 id="b1-stl_1">B.1 语法与 STL</h2>
 <ol>
 <li>
 <p>写一个 <code>SafeVector&lt;T&gt;</code>，<code>operator[]</code> 带边界检查（越界抛异常），
@@ -9220,7 +9632,7 @@ name=&#39;v3&#39;                        name=&#39;v2&#39;            name=&#39;
    （提示：<code>std::list</code> + <code>std::unordered_map&lt;K, list::iterator&gt;</code>）</p>
 </li>
 </ol>
-<h2 id="b2">B.2 设计模式</h2>
+<h2 id="b2_1">B.2 设计模式</h2>
 <ol start="6">
 <li>
 <p>实现一个线程安全的<strong>事件总线</strong>：
@@ -9235,7 +9647,7 @@ name=&#39;v3&#39;                        name=&#39;v2&#39;            name=&#39;
 <p>给第 12 章的 HTTP 服务器加一个<strong>装饰器</strong>：给任意 Handler 套上「记录耗时」的外壳。</p>
 </li>
 </ol>
-<h2 id="b3">B.3 网络编程</h2>
+<h2 id="b3_1">B.3 网络编程</h2>
 <ol start="9">
 <li>
 <p><strong>长度前缀协议</strong>：改造 <code>ch09_tcp</code>，实现
@@ -9331,7 +9743,7 @@ name=&#39;v3&#39;                        name=&#39;v2&#39;            name=&#39;
 </ul>
 <hr />
 <h1 id="d">附录 D · 推荐资源</h1>
-<h2 id="_71">书</h2>
+<h2 id="_72">书</h2>
 <table>
 <thead>
 <tr>
@@ -9378,7 +9790,7 @@ name=&#39;v3&#39;                        name=&#39;v2&#39;            name=&#39;
 </tr>
 </tbody>
 </table>
-<h2 id="_72">网站</h2>
+<h2 id="_73">网站</h2>
 <ul>
 <li><strong>cppreference.com</strong> —— 唯一权威的在线手册，有中文版但建议看英文</li>
 <li><strong>isocpp.org/faq</strong> —— 官方 FAQ</li>
@@ -9387,12 +9799,12 @@ name=&#39;v3&#39;                        name=&#39;v2&#39;            name=&#39;
 <li><strong>quick-bench.com</strong> —— 在线微基准测试</li>
 <li><strong>cppinsights.io</strong> —— <strong>看编译器把 lambda / 范围 for / 模板展开成了什么</strong>，学语法糖神器</li>
 </ul>
-<h2 id="_73">视频 / 会议</h2>
+<h2 id="_74">视频 / 会议</h2>
 <ul>
 <li><strong>CppCon</strong> (YouTube) —— 每年最重要的 C++ 会议</li>
 <li>Back to Basics 系列 —— CppCon 的入门专题，讲得非常清楚</li>
 </ul>
-<h2 id="_74">开源项目（按学习难度排序）</h2>
+<h2 id="_75">开源项目（按学习难度排序）</h2>
 <table>
 <thead>
 <tr>
@@ -9433,7 +9845,7 @@ name=&#39;v3&#39;                        name=&#39;v2&#39;            name=&#39;
 </table>
 <hr />
 <h1 id="e">附录 E · 工程速查</h1>
-<h2 id="_75">编译命令</h2>
+<h2 id="_76">编译命令</h2>
 <div class="codehilite"><pre><span></span><code><span class="c1"># MSVC</span>
 cl<span class="w"> </span>/std:c++20<span class="w"> </span>/utf-8<span class="w"> </span>/W4<span class="w"> </span>/EHsc<span class="w"> </span>/Zc:__cplusplus<span class="w"> </span>/permissive-<span class="w"> </span>main.cpp
 
@@ -9462,7 +9874,7 @@ g++<span class="w"> </span>-std<span class="o">=</span>c++20<span class="w"> </s
 <span class="nb">endif</span><span class="p">()</span>
 </code></pre></div>
 
-<h2 id="_76">本工程的命令</h2>
+<h2 id="_77">本工程的命令</h2>
 <div class="codehilite"><pre><span></span><code>scripts\build_vs.bat              :: 生成 .sln + 编译全部
 build\bin\Debug\ch01_cpp11.exe          :: 运行某一章
 

@@ -19,6 +19,7 @@
 #include <cstring>
 #include <memory>
 #include <thread>
+#include <stdexcept>
 
 using namespace std::chrono;
 

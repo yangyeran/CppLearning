@@ -15,6 +15,8 @@
 #include <iomanip>
 #include <iostream>
 #include <sstream>
+#include <stdexcept>
+#include <thread>
 
 #ifdef _WIN32
 // WSAPoll 需要 Vista+。它与 POSIX 的 poll 结构体布局兼容，

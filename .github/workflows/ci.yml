@@ -1,0 +1,345 @@
+name: CI
+
+# 这个工程的 CI 有四个目的：
+#   1. 保证 19 章代码在 GCC / Clang / MSVC 三套工具链上都能编译通过
+#   2. **在真实 Linux 上验证 epoll 相关代码** —— Windows 只能走 poll/WSAPoll，
+#      EpollPoller、eventfd、readv、SO_REUSEPORT 这些分支在本地一次都编译不到
+#   3. 用 ASan/UBSan 跑一遍，把内存错误和未定义行为挡在合并之前
+#   4. 确认文档能重新生成，且章节没有漏
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+# 同一分支重复推送时取消上一次未跑完的运行，省 CI 时间
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ===========================================================================
+  # Linux：主战场
+  # ===========================================================================
+  linux:
+    name: Linux · ${{ matrix.compiler }} · ${{ matrix.build_type }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { compiler: gcc,   cc: gcc,   cxx: g++,     build_type: Debug }
+          - { compiler: gcc,   cc: gcc,   cxx: g++,     build_type: Release }
+          - { compiler: clang, cc: clang, cxx: clang++, build_type: Debug }
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 工具链版本
+        run: |
+          ${{ matrix.cxx }} --version
+          cmake --version
+          uname -a
+
+      - name: 配置
+        run: |
+          cmake -S . -B build \
+            -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+            -DCMAKE_C_COMPILER=${{ matrix.cc }} \
+            -DCMAKE_CXX_COMPILER=${{ matrix.cxx }}
+
+      - name: 编译
+        run: cmake --build build -j$(nproc) 2>&1 | tee /tmp/build.log
+
+      - name: 统计警告数（不阻塞，仅暴露）
+        run: |
+          n=$(grep -c "warning:" /tmp/build.log || true)
+          echo "编译警告数：$n"
+          if [ "$n" -gt 0 ]; then
+            echo "::warning::本次编译产生了 $n 条警告"
+            grep "warning:" /tmp/build.log | sed 's/^/  /' | sort -u | head -40
+          fi
+
+      - name: 定位输出目录
+        # 单配置生成器（Makefile）会用 CMAKE_RUNTIME_OUTPUT_DIRECTORY_<CONFIG>，
+        # 但为了不被这个细节绑死，这里动态探测一下
+        run: |
+          BT=${{ matrix.build_type }}
+          if [ -d "build/bin/$BT" ]; then BIN="build/bin/$BT"; else BIN="build/bin"; fi
+          echo "BIN=$BIN" >> $GITHUB_ENV
+          echo "输出目录：$BIN"
+          ls "$BIN"
+
+      - name: 【核心】确认 Reactor 走的是 epoll 而不是 poll
+        # 这是本 CI 存在的首要理由。EpollPoller 的代码在 Windows 上
+        # 连编译都不会发生，只有这一步能证明它真的可用。
+        run: |
+          out=$("$BIN/ch16_reactor_selftest" 2>&1 | head -80)
+          echo "$out" | head -25
+          if echo "$out" | grep -q "Poller = epoll"; then
+            echo "::notice::确认使用 EpollPoller"
+          else
+            echo "::error::Reactor 没有走 epoll"
+            echo "$out" | grep -i "poller" || true
+            exit 1
+          fi
+
+      - name: 运行自动退出的章节
+        run: |
+          set -e
+          for exe in ch00_refresher ch01_cpp11 ch02_cpp14 ch03_cpp17 ch04_cpp20 \
+                     ch05_cpp23 ch06_stl ch07_patterns ch08_net_basics \
+                     ch13_pitfalls ch14_smartptr ch15_stl_source ch17_mysql \
+                     ch18_solutions ch16_reactor_selftest ch19_net_solutions; do
+            echo "::group::$exe"
+            "$BIN/$exe" > "/tmp/$exe.log" 2>&1 || {
+              echo "::error::$exe 退出码非 0"
+              tail -50 "/tmp/$exe.log"
+              exit 1
+            }
+            tail -4 "/tmp/$exe.log"
+            echo "::endgroup::"
+          done
+
+      - name: 第 11 章 —— select / poll / epoll 三种模式
+        run: |
+          set -e
+          "$BIN/ch11_multiplex" explain > /dev/null
+          for mode in select poll epoll; do
+            echo "::group::ch11 $mode"
+            python3 scripts/ci/drive_chat.py "$BIN/ch11_multiplex" 18890 "$mode"
+            echo "::endgroup::"
+          done
+
+      - name: 第 16 章 —— 回显服务器端到端
+        run: python3 scripts/ci/drive_echo.py "$BIN/ch16_echo_server" 19001 2
+
+      - name: 第 9 章 TCP —— 三种并发模型
+        run: |
+          set -e
+          for mode in iterative thread pool; do
+            echo "::group::ch09 $mode"
+            "$BIN/ch09_tcp_server" 18888 "$mode" > "/tmp/ch09_$mode.log" 2>&1 &
+            SRV=$!
+            sleep 1
+            "$BIN/ch09_tcp_client" 127.0.0.1 18888 demo | tail -12
+            kill $SRV 2>/dev/null || true
+            wait $SRV 2>/dev/null || true
+            echo "::endgroup::"
+          done
+
+      - name: 第 10 章 UDP
+        run: |
+          set -e
+          "$BIN/ch10_udp_server" 19999 > /tmp/ch10.log 2>&1 &
+          SRV=$!
+          sleep 1
+          "$BIN/ch10_udp_client" 127.0.0.1 19999 demo | tail -12
+          kill $SRV 2>/dev/null || true
+          wait $SRV 2>/dev/null || true
+
+      - name: 第 12 章 HTTP —— curl 打真实请求
+        run: |
+          set -e
+          "$BIN/ch12_http_server" 18080 > /tmp/ch12.log 2>&1 &
+          SRV=$!
+          sleep 1
+          code=$(curl -sS -o /dev/null -w "%{http_code}" http://127.0.0.1:18080/)
+          echo "GET / -> $code"
+          test "$code" = "200" || { echo "::error::首页没有返回 200"; exit 1; }
+
+          code=$(curl -sS -o /dev/null -w "%{http_code}" http://127.0.0.1:18080/definitely-not-here)
+          echo "GET /definitely-not-here -> $code"
+          test "$code" = "404" || { echo "::error::不存在的路径没有返回 404"; exit 1; }
+
+          echo "并发 50 个请求"
+          for i in $(seq 1 50); do curl -sS -o /dev/null http://127.0.0.1:18080/ & done
+          wait
+          code=$(curl -sS -o /dev/null -w "%{http_code}" http://127.0.0.1:18080/)
+          test "$code" = "200" || { echo "::error::并发后服务器不再响应"; exit 1; }
+          echo "并发后服务器仍然健康"
+
+          kill $SRV 2>/dev/null || true
+          wait $SRV 2>/dev/null || true
+          tail -6 /tmp/ch12.log
+
+  # ===========================================================================
+  # Sanitizer：ASan + UBSan
+  # ===========================================================================
+  sanitizers:
+    name: Linux · Clang · ASan+UBSan
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 配置（开启 sanitizer）
+        run: |
+          cmake -S . -B build-asan \
+            -DCMAKE_BUILD_TYPE=Debug \
+            -DCMAKE_C_COMPILER=clang \
+            -DCMAKE_CXX_COMPILER=clang++ \
+            -DCMAKE_CXX_FLAGS="-fsanitize=address,undefined -fno-omit-frame-pointer -g" \
+            -DCMAKE_EXE_LINKER_FLAGS="-fsanitize=address,undefined"
+
+      - name: 编译
+        run: cmake --build build-asan -j$(nproc)
+
+      - name: 定位输出目录
+        run: |
+          if [ -d build-asan/bin/Debug ]; then BIN=build-asan/bin/Debug; else BIN=build-asan/bin; fi
+          echo "BIN=$BIN" >> $GITHUB_ENV
+          echo "输出目录：$BIN"
+
+      - name: 全量检查（这些章节必须完全干净）
+        env:
+          UBSAN_OPTIONS: print_stacktrace=1:halt_on_error=1
+        run: |
+          set -e
+          for exe in ch00_refresher ch01_cpp11 ch02_cpp14 ch03_cpp17 ch04_cpp20 \
+                     ch05_cpp23 ch06_stl ch07_patterns ch08_net_basics \
+                     ch15_stl_source ch17_mysql ch18_solutions \
+                     ch16_reactor_selftest ch19_net_solutions; do
+            echo "::group::asan $exe"
+            "$BIN/$exe" > "/tmp/asan_$exe.log" 2>&1 || {
+              echo "::error::$exe 在 sanitizer 下失败"
+              tail -70 "/tmp/asan_$exe.log"
+              exit 1
+            }
+            echo OK
+            echo "::endgroup::"
+          done
+
+      - name: 第 13、14 章（含**故意**的内存错误，放宽对应两项检查）
+        # 这两章是「反面教材」章节，代码里刻意保留了真实的错误：
+        #   ch13 坑 13  通过非虚析构的基类指针 delete 派生对象
+        #               -> ASan 报 new-delete-type-mismatch（正是该章要演示的）
+        #   ch13 坑 23  shared_ptr 循环引用导致的泄漏
+        #   ch14 Part A 裸指针 + 异常路径导致的泄漏
+        #               -> LeakSanitizer 报泄漏（同样是刻意演示）
+        # 只关掉这两项，越界/悬垂/UB 检查仍然全开 ——
+        # 如果这两章有**非故意**的错误，照样会被抓出来。
+        env:
+          ASAN_OPTIONS: detect_leaks=0:new_delete_type_mismatch=0
+          UBSAN_OPTIONS: print_stacktrace=1:halt_on_error=1
+        run: |
+          set -e
+          for exe in ch13_pitfalls ch14_smartptr; do
+            echo "::group::asan $exe（已放宽 leak / new-delete-mismatch）"
+            "$BIN/$exe" > "/tmp/asan_$exe.log" 2>&1 || {
+              echo "::error::$exe 在 sanitizer 下失败"
+              tail -70 "/tmp/asan_$exe.log"
+              exit 1
+            }
+            echo OK
+            echo "::endgroup::"
+          done
+
+      - name: sanitizer 下跑 epoll 聊天室与 Reactor 回显
+        env:
+          UBSAN_OPTIONS: print_stacktrace=1:halt_on_error=1
+        run: |
+          set -e
+          python3 scripts/ci/drive_chat.py "$BIN/ch11_multiplex" 18890 epoll
+          python3 scripts/ci/drive_echo.py "$BIN/ch16_echo_server" 19001 2
+
+  # ===========================================================================
+  # Windows：验证 MSVC 与 Winsock 兼容层
+  # ===========================================================================
+  windows:
+    name: Windows · MSVC · ${{ matrix.build_type }}
+    runs-on: windows-latest
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        build_type: [Debug, Release]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 配置
+        run: cmake -S . -B build -G "Visual Studio 17 2022" -A x64
+
+      - name: 编译
+        run: cmake --build build --config ${{ matrix.build_type }} -- -m
+
+      - name: 运行自动退出的章节
+        shell: bash
+        run: |
+          set -e
+          BIN="build/bin/${{ matrix.build_type }}"
+          for exe in ch00_refresher ch01_cpp11 ch02_cpp14 ch03_cpp17 ch04_cpp20 \
+                     ch05_cpp23 ch06_stl ch07_patterns ch08_net_basics \
+                     ch13_pitfalls ch14_smartptr ch15_stl_source ch17_mysql \
+                     ch18_solutions ch16_reactor_selftest ch19_net_solutions; do
+            echo "::group::$exe"
+            "$BIN/$exe.exe" > "$exe.log" 2>&1 || {
+              echo "::error::$exe 退出码非 0"
+              tail -50 "$exe.log"
+              exit 1
+            }
+            tail -3 "$exe.log"
+            echo "::endgroup::"
+          done
+
+      - name: 第 11 章 —— select / poll(WSAPoll)
+        shell: bash
+        run: |
+          set -e
+          BIN="build/bin/${{ matrix.build_type }}"
+          for mode in select poll; do
+            echo "::group::ch11 $mode"
+            python scripts/ci/drive_chat.py "$BIN/ch11_multiplex.exe" 18890 "$mode"
+            echo "::endgroup::"
+          done
+          echo "epoll 是 Linux 独有，由 linux job 覆盖"
+
+      - name: 第 16 章 —— 回显服务器端到端
+        shell: bash
+        run: |
+          BIN="build/bin/${{ matrix.build_type }}"
+          python scripts/ci/drive_echo.py "$BIN/ch16_echo_server.exe" 19001 2
+
+  # ===========================================================================
+  # 文档：确认能重新生成，且章节齐全
+  # ===========================================================================
+  docs:
+    name: 文档生成
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 安装依赖
+        run: python -m pip install --quiet markdown pygments
+
+      - name: 删掉已有产物，强制重新生成
+        # 不删的话，即使生成脚本坏了，下面的检查也会因为仓库里
+        # 已提交的文件而误判通过
+        run: rm -f docs/CppLearningGuide.md docs/CppLearningGuide.html
+
+      - name: 生成
+        # PDF 那一步需要无头 Chrome/Edge，CI 环境没有，所以允许它失败；
+        # Markdown 与 HTML 两步必须成功
+        run: |
+          python scripts/build_pdf.py || true
+          test -s docs/CppLearningGuide.md   || { echo "::error::Markdown 没有生成"; exit 1; }
+          test -s docs/CppLearningGuide.html || { echo "::error::HTML 没有生成"; exit 1; }
+          echo "Markdown $(wc -c < docs/CppLearningGuide.md) 字节"
+          echo "HTML     $(wc -c < docs/CppLearningGuide.html) 字节"
+
+      - name: 检查章节齐全
+        run: |
+          set -e
+          for ch in "第 0 章" "第 1 章" "第 8 章" "第 13 章" "第 14 章" \
+                    "第 15 章" "第 16 章" "第 17 章" "附录 A" "附录 B"; do
+            grep -q "$ch" docs/CppLearningGuide.md || {
+              echo "::error::合并结果里缺少 $ch"; exit 1; }
+          done
+          echo "全部章节存在"

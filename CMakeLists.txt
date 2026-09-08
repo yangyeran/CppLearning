@@ -65,6 +65,8 @@ add_subdirectory(src/ch14_smartptr)      # 14. 智能指针深入 + 手写实现
 add_subdirectory(src/ch15_stl_source)    # 15. STL 源码剖析（手写实现）
 add_subdirectory(src/ch16_reactor)       # 16. Reactor 完整实现 + 回显/聊天室
 add_subdirectory(src/ch17_mysql)         # 17. MySQL 命令 + 原理（B+树/MVCC/LRU）
+add_subdirectory(src/ch18_solutions)     # 18. 练习题答案：语法/STL/设计模式
+add_subdirectory(src/ch19_net_solutions) # 19. 练习题答案：网络（复用 ch16 库）
 
 message(STATUS "")
 message(STATUS "==========================================================")

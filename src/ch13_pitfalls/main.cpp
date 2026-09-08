@@ -41,6 +41,8 @@
 #include <thread>
 #include <type_traits>
 #include <vector>
+#include <cmath>
+#include <stdexcept>
 
 // 让「这个函数只是给你看，不要真调用」的意图更明显
 #define 仅供阅读

@@ -127,6 +127,8 @@
 | 15 | **STL 源码剖析** | `ch15_stl_source` | 手写 vector/string SSO/list/红黑树/哈希表/introsort |
 | 16 | **Reactor 完整实现** | `ch16_reactor_selftest` `ch16_echo_server` `ch16_chat_server` | 可用的小型网络库，8 组自动化验证 |
 | 17 | **MySQL 命令与原理** | `ch17_mysql` | 命令速查 + 手写 B+树/MVCC/Buffer Pool |
+| 18 | **练习题答案**（语法/STL/模式）| `ch18_solutions` | 附录 B 第 1~8 题，每题带自检 |
+| 19 | **练习题答案**（网络）| `ch19_net_solutions` | 附录 B 第 9~14 题，含 MD5/SHA-1/WebSocket |
 
 ---
 

@@ -1,7 +1,9 @@
 # CppLearning —— C++ 复习 + Linux 网络编程 完整工程
 
+[![CI](https://github.com/yangyeran/CppLearning/actions/workflows/ci.yml/badge.svg)](https://github.com/yangyeran/CppLearning/actions/workflows/ci.yml)
+
 从「语法忘光了」到「手写 HTTP 服务器」的一整条学习链路。
-**15 个可独立运行的程序**，全部在 Visual Studio 2022 (MSVC 14.40) 上编译验证通过，
+**24 个可独立运行的程序**，全部在 Visual Studio 2022 (MSVC 14.40) 上编译验证通过，
 同一份代码也能在 Linux / WSL 上编译运行。
 
 ---
@@ -50,7 +52,7 @@ cmake --build build-linux -j$(nproc)
 ## 学习文档
 
 ```
-docs/CppLearningGuide.pdf     ← 完整手册（202 页），打印/平板阅读
+docs/CppLearningGuide.pdf     ← 完整手册（213 页），打印/平板阅读
 docs/CppLearningGuide.html    ← 同内容 HTML，带目录，浏览器直接看
 docs/CppLearningGuide.md      ← 同内容 Markdown，编辑器里看
 docs/parts/*.md               ← 分章节源文件
@@ -88,6 +90,8 @@ python scripts\build_pdf.py
 | 15 | STL 源码剖析 | `ch15_stl_source` | 直接运行（**基准测试请用 Release**） |
 | 16 | Reactor 网络库 | `ch16_reactor_selftest` `ch16_echo_server` `ch16_chat_server` | 见下 |
 | 17 | MySQL 命令与原理 | `ch17_mysql` | 直接运行（无需安装 MySQL） |
+| 18 | 练习题答案（语法/STL/模式）| `ch18_solutions` | 直接运行 |
+| 19 | 练习题答案（网络）| `ch19_net_solutions` | 直接运行 |
 
 ### 网络章节的跑法
 
@@ -210,7 +214,10 @@ CppLearning/
     │   ├── reactor_selftest.cpp  8 组自动化验证
     │   ├── echo_server.cpp       回显服务器
     │   └── chat_server.cpp       聊天室（跨线程广播）
-    └── ch17_mysql/               MySQL 原理模拟（B+树/MVCC/LRU）
+    ├── ch17_mysql/               MySQL 原理模拟（B+树/MVCC/LRU）
+    ├── ch18_solutions/           练习题 1~8 答案
+    └── ch19_net_solutions/       练习题 9~14 答案
+                                  solutions.h = 长度前缀/定时器堆/MD5/SHA1/WebSocket
 ```
 
 ---

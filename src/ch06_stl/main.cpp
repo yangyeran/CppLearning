@@ -35,6 +35,7 @@
 #include <type_traits>
 #include <utility>
 #include <memory>
+#include <stdexcept>
 
 using namespace std::chrono;
 

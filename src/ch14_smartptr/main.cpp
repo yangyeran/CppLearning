@@ -27,6 +27,7 @@
 #include <thread>
 #include <utility>
 #include <vector>
+#include <stdexcept>
 
 // =============================================================================
 // Part A —— 为什么需要智能指针

@@ -6,7 +6,8 @@ add_library(reactor_lib STATIC
     reactor/reactor.h
 )
 target_include_directories(reactor_lib PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/reactor
+    ${CMAKE_CURRENT_SOURCE_DIR}           # 让别的章节能写 #include "reactor/reactor.h"
+    ${CMAKE_CURRENT_SOURCE_DIR}/reactor   # 库内部可以写 #include "reactor.h"
     ${CMAKE_SOURCE_DIR}/src/common
 )
 set_target_properties(reactor_lib PROPERTIES FOLDER "Chapters/ch16")

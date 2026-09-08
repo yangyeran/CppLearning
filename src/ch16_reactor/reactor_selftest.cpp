@@ -30,6 +30,7 @@
 #include <string>
 #include <thread>
 #include <vector>
+#include <stdexcept>
 
 using namespace reactor;
 using namespace std::chrono_literals;
