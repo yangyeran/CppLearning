@@ -27,50 +27,82 @@
 #include <cstdint>
 #include <type_traits>
 #include <version>          // 提供所有 __cpp_lib_xxx 特性测试宏
-
 // ---- 特性探测 ---------------------------------------------------------------
+//
+// 【为什么不能只用 __has_include】
+//   __has_include(<expected>) 只说明「这个头文件存在」，不说明「特性可用」。
+//   libstdc++ 的 <expected> 内部还有一层 `#if __cplusplus > 202002L` 的门，
+//   在 C++20 模式下（或某些 clang + libstdc++ 组合下）头文件能包含成功，
+//   但里面什么都没声明 —— 于是 std::expected 未定义，编译在使用处才炸。
+//   本章第一次跑 Linux CI 时就是这么失败的：
+//     error: no template named 'expected' in namespace 'std'
+//
+//   正确做法是两级判断：
+//     1. __has_include  决定能不能 #include（不存在就别包含，否则预处理报错）
+//     2. __cpp_lib_xxx  决定特性是否真的可用（由 <version> 或该头文件定义）
+//
+//   这两个宏的分工是标准明确规定的，凡是做特性探测都应该这么写。
+// -----------------------------------------------------------------------------
+
+// std::expected / std::unexpected
 #if __has_include(<expected>)
 #  include <expected>
+#endif
+#ifdef __cpp_lib_expected
 #  define HAS_EXPECTED 1
 #else
 #  define HAS_EXPECTED 0
 #endif
 
+// std::print / std::println
 #if __has_include(<print>)
 #  include <print>
+#endif
+#ifdef __cpp_lib_print
 #  define HAS_PRINT 1
 #else
 #  define HAS_PRINT 0
 #endif
 
+// std::generator（协程生成器）
 #if __has_include(<generator>)
 #  include <generator>
+#endif
+#ifdef __cpp_lib_generator
 #  define HAS_GENERATOR 1
 #else
 #  define HAS_GENERATOR 0
 #endif
 
+// std::mdspan（多维视图）
 #if __has_include(<mdspan>)
 #  include <mdspan>
+#endif
+#ifdef __cpp_lib_mdspan
 #  define HAS_MDSPAN 1
 #else
 #  define HAS_MDSPAN 0
 #endif
 
+// std::flat_map / flat_set
 #if __has_include(<flat_map>)
 #  include <flat_map>
+#endif
+#ifdef __cpp_lib_flat_map
 #  define HAS_FLATMAP 1
 #else
 #  define HAS_FLATMAP 0
 #endif
 
+// std::stacktrace
 #if __has_include(<stacktrace>)
 #  include <stacktrace>
+#endif
+#ifdef __cpp_lib_stacktrace
 #  define HAS_STACKTRACE 1
 #else
 #  define HAS_STACKTRACE 0
 #endif
-
 namespace rv = std::views;
 
 // =============================================================================

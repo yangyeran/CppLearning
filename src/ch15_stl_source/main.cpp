@@ -1765,7 +1765,10 @@ static void s11_benchmark() {
             sink = static_cast<long long>(fn());
             auto us = std::chrono::duration_cast<std::chrono::microseconds>(
                           std::chrono::steady_clock::now() - t0).count();
-            best = (std::min)(best, us);
+            // 显式转换：chrono 的 count() 在 LP64 Linux 上返回 long，
+            // 而 best 是 long long。两者虽然同宽但是不同类型，
+            // std::min 是同类型模板，推导会失败（GCC 报 no matching function）。
+            best = (std::min)(best, static_cast<long long>(us));
         }
         std::cout << "    " << demo::pad(tag, 40)
                   << std::right << std::setw(8) << best << " us   (校验和 " << sink << ")\n";

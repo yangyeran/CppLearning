@@ -119,16 +119,31 @@ jobs:
 
       - name: 第 11 章 —— select / poll / epoll 三种模式
         run: |
-          set -e
           "$BIN/ch11_multiplex" explain > /dev/null
+          port=18890
           for mode in select poll epoll; do
-            echo "::group::ch11 $mode"
-            python3 scripts/ci/drive_chat.py "$BIN/ch11_multiplex" 18890 "$mode"
+            echo "::group::ch11 $mode (port $port)"
+            # 每种模式换一个端口：同一端口连续 bind 会撞上上一轮的 TIME_WAIT
+            if ! python3 scripts/ci/drive_chat.py "$BIN/ch11_multiplex" "$port" "$mode" > drv.log 2>&1; then
+              cat drv.log
+              echo "::error::ch11 $mode 模式验证失败"
+              tail -15 drv.log | while IFS= read -r line; do echo "::error::$line"; done
+              exit 1
+            fi
+            cat drv.log
             echo "::endgroup::"
+            port=$((port + 1))
           done
 
       - name: 第 16 章 —— 回显服务器端到端
-        run: python3 scripts/ci/drive_echo.py "$BIN/ch16_echo_server" 19001 2
+        run: |
+          if ! python3 scripts/ci/drive_echo.py "$BIN/ch16_echo_server" 19001 2 > drv.log 2>&1; then
+            cat drv.log
+            echo "::error::ch16 回显服务器验证失败"
+            tail -15 drv.log | while IFS= read -r line; do echo "::error::$line"; done
+            exit 1
+          fi
+          cat drv.log
 
       - name: 第 9 章 TCP —— 三种并发模型
         run: |
@@ -265,8 +280,15 @@ jobs:
           UBSAN_OPTIONS: print_stacktrace=1:halt_on_error=1
         run: |
           set -e
-          python3 scripts/ci/drive_chat.py "$BIN/ch11_multiplex" 18890 epoll
-          python3 scripts/ci/drive_echo.py "$BIN/ch16_echo_server" 19001 2
+          for spec in "drive_chat.py $BIN/ch11_multiplex 18895 epoll" "drive_echo.py $BIN/ch16_echo_server 19005 2"; do
+            if ! python3 scripts/ci/$spec > drv.log 2>&1; then
+              cat drv.log
+              echo "::error::sanitizer 下 $spec 失败"
+              tail -15 drv.log | while IFS= read -r line; do echo "::error::$line"; done
+              exit 1
+            fi
+            cat drv.log
+          done
 
   # ===========================================================================
   # Windows：验证 MSVC 与 Winsock 兼容层
@@ -322,15 +344,28 @@ jobs:
             echo "::endgroup::"
           done
 
+      - name: python 可用性
+        shell: bash
+        run: |
+          which python || which python3 || echo "PATH 上没有 python"
+          python --version || python3 --version
+
       - name: 第 11 章 —— select / poll(WSAPoll)
         shell: bash
         run: |
-          set -e
           BIN="build/bin/${{ matrix.build_type }}"
+          port=18890
           for mode in select poll; do
-            echo "::group::ch11 $mode"
-            python scripts/ci/drive_chat.py "$BIN/ch11_multiplex.exe" 18890 "$mode"
+            echo "::group::ch11 $mode (port $port)"
+            if ! python scripts/ci/drive_chat.py "$BIN/ch11_multiplex.exe" "$port" "$mode" > drv.log 2>&1; then
+              cat drv.log
+              echo "::error::Windows ch11 $mode 模式验证失败"
+              tail -15 drv.log | while IFS= read -r line; do echo "::error::$line"; done
+              exit 1
+            fi
+            cat drv.log
             echo "::endgroup::"
+            port=$((port + 1))
           done
           echo "epoll 是 Linux 独有，由 linux job 覆盖"
 
@@ -338,7 +373,13 @@ jobs:
         shell: bash
         run: |
           BIN="build/bin/${{ matrix.build_type }}"
-          python scripts/ci/drive_echo.py "$BIN/ch16_echo_server.exe" 19001 2
+          if ! python scripts/ci/drive_echo.py "$BIN/ch16_echo_server.exe" 19001 2 > drv.log 2>&1; then
+            cat drv.log
+            echo "::error::Windows ch16 回显验证失败"
+            tail -15 drv.log | while IFS= read -r line; do echo "::error::$line"; done
+            exit 1
+          fi
+          cat drv.log
 
   # ===========================================================================
   # 文档：确认能重新生成，且章节齐全
