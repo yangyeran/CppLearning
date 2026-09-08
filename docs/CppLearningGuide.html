@@ -103,7 +103,7 @@ li>ul,li>ol{margin:.2em 0}
 </style>
 </head>
 <body>
-<div class="cover"><h1>C++ 复习与 Linux 网络编程</h1><p class="sub">完整学习手册 · 从语法回忆到手写 HTTP 服务器</p><p class="sub">配套工程：CppLearning（15 个可运行程序）</p><p class="meta">生成时间 2026-09-08 09:40</p></div>
+<div class="cover"><h1>C++ 复习与 Linux 网络编程</h1><p class="sub">完整学习手册 · 从语法回忆到手写 HTTP 服务器</p><p class="sub">配套工程：CppLearning（15 个可运行程序）</p><p class="meta">生成时间 2026-09-08 10:50</p></div>
 <nav id="doc-toc"><p>目录</p>
 <ul>
 <li><a href="#c-linux">C++ 复习与 Linux 网络编程 · 完整学习手册</a><ul>
@@ -655,7 +655,10 @@ li>ul,li>ol{margin:.2em 0}
 <li><a href="#_71">附带实现的摘要算法</a></li>
 </ul>
 </li>
-<li><a href="#ci">关于 CI</a></li>
+<li><a href="#ci">关于 CI</a><ul>
+<li><a href="#ci_1">第一次跑 CI 踩的五个坑</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a href="#a-4-3">附录 A · 复习计划（4 周主线 + 3 周进阶）</a><ul>
@@ -9266,6 +9269,55 @@ name=&#39;v3&#39;                        name=&#39;v2&#39;            name=&#39;
 </tbody>
 </table>
 <p><strong>Linux job 的首要价值是验证 epoll。</strong> <code>EpollPoller</code>、<code>eventfd</code>、<code>readv</code>、<code>SO_REUSEPORT</code> 这些代码路径在 Windows 上连编译都不会发生 —— 只有 CI 能证明它们真的可用。CI 里有一步专门 grep 服务器日志里的 <code>Poller = epoll</code>，确认没有静默回退到 <code>PollPoller</code>。</p>
+<h3 id="ci_1">第一次跑 CI 踩的五个坑</h3>
+<p>接 CI 的过程本身很有教学价值 —— 这五个问题在本地全都测不出来，值得单独记一下。</p>
+<p><strong>① 编译失败被管道吞掉</strong></p>
+<div class="codehilite"><pre><span></span><code>cmake<span class="w"> </span>--build<span class="w"> </span>build<span class="w"> </span>-j<span class="k">$(</span>nproc<span class="k">)</span><span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tee<span class="w"> </span>build.log<span class="w">      </span><span class="c1"># 错</span>
+</code></pre></div>
+
+<p>管道的退出码是<strong>最后一个命令</strong>（<code>tee</code>）的，编译失败返回 0。于是后续步骤在
+缺少可执行文件的情况下继续跑，报出「Reactor 没有走 epoll」这种完全误导性的
+错误 —— 真正的编译错误一个字都看不到。</p>
+<div class="codehilite"><pre><span></span><code><span class="k">if</span><span class="w"> </span>!<span class="w"> </span>cmake<span class="w"> </span>--build<span class="w"> </span>build<span class="w"> </span>-j<span class="k">$(</span>nproc<span class="k">)</span><span class="w"> </span>&gt;<span class="w"> </span>build.log<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="p">;</span><span class="w"> </span><span class="k">then</span><span class="w"> </span>...<span class="w"> </span><span class="k">fi</span><span class="w">   </span><span class="c1"># 对</span>
+</code></pre></div>
+
+<p>（或者 <code>set -o pipefail</code>。）</p>
+<p><strong>② 裸 <code>wait</code> 会等待后台的服务器进程</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="s2">&quot;</span><span class="nv">$BIN</span><span class="s2">/ch12_http_server&quot;</span><span class="w"> </span><span class="m">18080</span><span class="w"> </span><span class="p">&amp;</span><span class="w">            </span><span class="c1"># 永不退出</span>
+<span class="k">for</span><span class="w"> </span>i<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="k">$(</span>seq<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="m">50</span><span class="k">)</span><span class="p">;</span><span class="w"> </span><span class="k">do</span><span class="w"> </span>curl<span class="w"> </span>...<span class="w"> </span><span class="p">&amp;</span><span class="w"> </span><span class="k">done</span>
+<span class="nb">wait</span><span class="w">                                        </span><span class="c1"># 错：也在等服务器</span>
+</code></pre></div>
+
+<p>这一步挂到 job 30 分钟超时，日志里毫无线索。正确做法是收集要等的 PID：</p>
+<div class="codehilite"><pre><span></span><code><span class="nv">pids</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+<span class="k">for</span><span class="w"> </span>i<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="k">$(</span>seq<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="m">50</span><span class="k">)</span><span class="p">;</span><span class="w"> </span><span class="k">do</span><span class="w"> </span>curl<span class="w"> </span>...<span class="w"> </span><span class="p">&amp;</span><span class="w"> </span><span class="nv">pids</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$pids</span><span class="s2"> </span><span class="nv">$!</span><span class="s2">&quot;</span><span class="p">;</span><span class="w"> </span><span class="k">done</span>
+<span class="k">for</span><span class="w"> </span>pid<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="nv">$pids</span><span class="p">;</span><span class="w"> </span><span class="k">do</span><span class="w"> </span><span class="nb">wait</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$pid</span><span class="s2">&quot;</span><span class="p">;</span><span class="w"> </span><span class="k">done</span>
+</code></pre></div>
+
+<p>顺带说明：修好之后实测 ch12 的线程池在 605 ms 内完成了全部 50 个并发请求 ——
+一开始怀疑是它的并发上限，结果是测试脚本自己的问题。<strong>先怀疑测量工具，再怀疑被测对象。</strong></p>
+<p><strong>③ <code>__has_include</code> 不等于特性可用</strong></p>
+<p>clang + libstdc++ 上 <code>&lt;expected&gt;</code> 头文件存在，但内部还有一层
+<code>#if __cplusplus &gt; 202002L</code> 的门；门没过时头文件包含成功却什么都不声明，
+于是编译在<strong>使用处</strong>才报 <code>no template named 'expected' in namespace 'std'</code>。</p>
+<p>必须两级判断：<code>__has_include</code> 决定能不能 include，<code>__cpp_lib_expected</code>
+决定特性是否真的可用。</p>
+<p><strong>④ Windows runner 的 stdout 不是 UTF-8</strong></p>
+<p>GitHub 的 Windows runner 上 Python 的 stdout 编码是 <strong>cp1252</strong>，打印中文直接
+<code>UnicodeEncodeError</code> 崩溃 —— 而且崩在日志函数里，比真正要报告的失败更早，
+堆栈完全误导。本地 Git Bash 是 GBK 能编码中文，所以测不出来。</p>
+<div class="codehilite"><pre><span></span><code><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">reconfigure</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;replace&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<p><strong>⑤ MSVC 的传递包含惯坏了你</strong></p>
+<p>MSVC 的标准库头文件之间互相包含很多，所以缺 <code>#include</code> 也能编译；GCC/libstdc++
+不会。首轮 CI 报出 <code>std::exchange</code> 缺 <code>&lt;utility&gt;</code>、<code>std::uint32_t</code> 缺 <code>&lt;cstdint&gt;</code>。</p>
+<p>与其逐个等 CI 报，写了个按「符号 → 所需头」规则扫全仓库的审计脚本（先剥掉注释和
+字符串字面量避免误判），一次补齐了 27 个文件、72 个 include。</p>
+<blockquote>
+<p>这五个坑有个共同点：<strong>它们都只在「与本地不同的环境」里出现</strong>。
+这就是 CI 的价值 —— 不是替你跑测试，而是替你在你没有的环境里跑测试。</p>
+</blockquote>
 <p><strong>Sanitizer job 有个值得一提的细节</strong>：第 13、14 章是「反面教材」章节，代码里刻意保留了真实的内存错误（非虚析构基类删除、<code>shared_ptr</code> 循环引用泄漏）。所以这两章单独放宽 <code>detect_leaks</code> 和 <code>new_delete_type_mismatch</code> 两项，其余检查全开 —— 如果它们有<strong>非故意</strong>的错误，照样会被抓出来。</p>
 <h1 id="a-4-3">附录 A · 复习计划（4 周主线 + 3 周进阶）</h1>
 <p>按每天 2~3 小时估算。赶时间就跳过标 ☆ 的部分。</p>

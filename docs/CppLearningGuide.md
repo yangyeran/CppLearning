@@ -7738,6 +7738,75 @@ C++ 标准库**没有**任何加密摘要算法，所以第 11、14 题需要自
 
 **Linux job 的首要价值是验证 epoll。** `EpollPoller`、`eventfd`、`readv`、`SO_REUSEPORT` 这些代码路径在 Windows 上连编译都不会发生 —— 只有 CI 能证明它们真的可用。CI 里有一步专门 grep 服务器日志里的 `Poller = epoll`，确认没有静默回退到 `PollPoller`。
 
+### 第一次跑 CI 踩的五个坑
+
+接 CI 的过程本身很有教学价值 —— 这五个问题在本地全都测不出来，值得单独记一下。
+
+**① 编译失败被管道吞掉**
+
+```bash
+cmake --build build -j$(nproc) 2>&1 | tee build.log      # 错
+```
+
+管道的退出码是**最后一个命令**（`tee`）的，编译失败返回 0。于是后续步骤在
+缺少可执行文件的情况下继续跑，报出「Reactor 没有走 epoll」这种完全误导性的
+错误 —— 真正的编译错误一个字都看不到。
+
+```bash
+if ! cmake --build build -j$(nproc) > build.log 2>&1; then ... fi   # 对
+```
+
+（或者 `set -o pipefail`。）
+
+**② 裸 `wait` 会等待后台的服务器进程**
+
+```bash
+"$BIN/ch12_http_server" 18080 &            # 永不退出
+for i in $(seq 1 50); do curl ... & done
+wait                                        # 错：也在等服务器
+```
+
+这一步挂到 job 30 分钟超时，日志里毫无线索。正确做法是收集要等的 PID：
+
+```bash
+pids=""
+for i in $(seq 1 50); do curl ... & pids="$pids $!"; done
+for pid in $pids; do wait "$pid"; done
+```
+
+顺带说明：修好之后实测 ch12 的线程池在 605 ms 内完成了全部 50 个并发请求 ——
+一开始怀疑是它的并发上限，结果是测试脚本自己的问题。**先怀疑测量工具，再怀疑被测对象。**
+
+**③ `__has_include` 不等于特性可用**
+
+clang + libstdc++ 上 `<expected>` 头文件存在，但内部还有一层
+`#if __cplusplus > 202002L` 的门；门没过时头文件包含成功却什么都不声明，
+于是编译在**使用处**才报 `no template named 'expected' in namespace 'std'`。
+
+必须两级判断：`__has_include` 决定能不能 include，`__cpp_lib_expected`
+决定特性是否真的可用。
+
+**④ Windows runner 的 stdout 不是 UTF-8**
+
+GitHub 的 Windows runner 上 Python 的 stdout 编码是 **cp1252**，打印中文直接
+`UnicodeEncodeError` 崩溃 —— 而且崩在日志函数里，比真正要报告的失败更早，
+堆栈完全误导。本地 Git Bash 是 GBK 能编码中文，所以测不出来。
+
+```python
+sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+```
+
+**⑤ MSVC 的传递包含惯坏了你**
+
+MSVC 的标准库头文件之间互相包含很多，所以缺 `#include` 也能编译；GCC/libstdc++
+不会。首轮 CI 报出 `std::exchange` 缺 `<utility>`、`std::uint32_t` 缺 `<cstdint>`。
+
+与其逐个等 CI 报，写了个按「符号 → 所需头」规则扫全仓库的审计脚本（先剥掉注释和
+字符串字面量避免误判），一次补齐了 27 个文件、72 个 include。
+
+> 这五个坑有个共同点：**它们都只在「与本地不同的环境」里出现**。
+> 这就是 CI 的价值 —— 不是替你跑测试，而是替你在你没有的环境里跑测试。
+
 **Sanitizer job 有个值得一提的细节**：第 13、14 章是「反面教材」章节，代码里刻意保留了真实的内存错误（非虚析构基类删除、`shared_ptr` 循环引用泄漏）。所以这两章单独放宽 `detect_leaks` 和 `new_delete_type_mismatch` 两项，其余检查全开 —— 如果它们有**非故意**的错误，照样会被抓出来。
 
 # 附录 A · 复习计划（4 周主线 + 3 周进阶）

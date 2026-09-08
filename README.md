@@ -52,7 +52,7 @@ cmake --build build-linux -j$(nproc)
 ## 学习文档
 
 ```
-docs/CppLearningGuide.pdf     ← 完整手册（213 页），打印/平板阅读
+docs/CppLearningGuide.pdf     ← 完整手册（214 页），打印/平板阅读
 docs/CppLearningGuide.html    ← 同内容 HTML，带目录，浏览器直接看
 docs/CppLearningGuide.md      ← 同内容 Markdown，编辑器里看
 docs/parts/*.md               ← 分章节源文件
