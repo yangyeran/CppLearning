@@ -41,6 +41,20 @@ import time
 # 写文件不会阻塞，测试结束后再读回来打印即可。
 # -----------------------------------------------------------------------------
 
+# -----------------------------------------------------------------------------
+# 强制 stdout/stderr 用 UTF-8。
+#
+# GitHub 的 Windows runner 上 Python 的 stdout 编码是 cp1252，
+# 打印中文会直接抛 UnicodeEncodeError 把脚本干掉 ——
+# 而且崩在 log() 里，比真正要报告的失败更早，非常误导。
+# （本地 Git Bash 是 GBK，能编码中文，所以本地测不出来。）
+# -----------------------------------------------------------------------------
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+    except (AttributeError, OSError):
+        pass
+
 TAG = "drive_chat"
 TIMEOUT = 5.0
 

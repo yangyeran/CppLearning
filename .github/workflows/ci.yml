@@ -108,12 +108,13 @@ jobs:
                      ch13_pitfalls ch14_smartptr ch15_stl_source ch17_mysql \
                      ch18_solutions ch16_reactor_selftest ch19_net_solutions; do
             echo "::group::$exe"
-            "$BIN/$exe" > "/tmp/$exe.log" 2>&1 || {
-              echo "::error::$exe 退出码非 0"
-              tail -50 "/tmp/$exe.log"
+            timeout 600 "$BIN/$exe" > "$exe.log" 2>&1 || {
+              rc=$?
+              echo "::error::$exe 退出码 $rc（124 表示超过 600 秒超时）"
+              tail -50 "$exe.log"
               exit 1
             }
-            tail -4 "/tmp/$exe.log"
+            tail -4 "$exe.log"
             echo "::endgroup::"
           done
 
@@ -146,33 +147,55 @@ jobs:
           cat drv.log
 
       - name: 第 9 章 TCP —— 三种并发模型
+        # 每个模式换端口（避免上一轮的 TIME_WAIT），并给客户端加 timeout。
+        # 首轮 CI 这一步挂了 8 分钟直到 job 超时才结束，完全没有诊断信息 ——
+        # 驱动外部进程的步骤一律要有超时上限，否则一次卡死就浪费整轮 CI。
         run: |
-          set -e
+          port=18888
           for mode in iterative thread pool; do
-            echo "::group::ch09 $mode"
-            "$BIN/ch09_tcp_server" 18888 "$mode" > "/tmp/ch09_$mode.log" 2>&1 &
+            echo "::group::ch09 $mode (port $port)"
+            "$BIN/ch09_tcp_server" "$port" "$mode" > "ch09_$mode.log" 2>&1 &
             SRV=$!
             sleep 1
-            "$BIN/ch09_tcp_client" 127.0.0.1 18888 demo | tail -12
+            if ! timeout 60 "$BIN/ch09_tcp_client" 127.0.0.1 "$port" demo > "ch09_client_$mode.log" 2>&1; then
+              rc=$?
+              echo "::error::ch09 $mode 模式失败（客户端退出码 $rc，124 表示超时）"
+              echo "--- 客户端输出 ---"; tail -30 "ch09_client_$mode.log"
+              echo "--- 服务端输出 ---"; tail -30 "ch09_$mode.log"
+              kill -9 $SRV 2>/dev/null || true
+              exit 1
+            fi
+            tail -6 "ch09_client_$mode.log"
             kill $SRV 2>/dev/null || true
+            sleep 0.3
+            kill -9 $SRV 2>/dev/null || true
             wait $SRV 2>/dev/null || true
             echo "::endgroup::"
+            port=$((port + 1))
           done
 
       - name: 第 10 章 UDP
         run: |
-          set -e
-          "$BIN/ch10_udp_server" 19999 > /tmp/ch10.log 2>&1 &
+          "$BIN/ch10_udp_server" 19999 > ch10.log 2>&1 &
           SRV=$!
           sleep 1
-          "$BIN/ch10_udp_client" 127.0.0.1 19999 demo | tail -12
+          if ! timeout 60 "$BIN/ch10_udp_client" 127.0.0.1 19999 demo > ch10_client.log 2>&1; then
+            rc=$?
+            echo "::error::ch10 UDP 失败（客户端退出码 $rc，124 表示超时）"
+            echo "--- 客户端输出 ---"; tail -30 ch10_client.log
+            echo "--- 服务端输出 ---"; tail -30 ch10.log
+            kill -9 $SRV 2>/dev/null || true
+            exit 1
+          fi
+          tail -6 ch10_client.log
           kill $SRV 2>/dev/null || true
+          kill -9 $SRV 2>/dev/null || true
           wait $SRV 2>/dev/null || true
 
       - name: 第 12 章 HTTP —— curl 打真实请求
         run: |
           set -e
-          "$BIN/ch12_http_server" 18080 > /tmp/ch12.log 2>&1 &
+          "$BIN/ch12_http_server" 18080 > ch12.log 2>&1 &
           SRV=$!
           sleep 1
           code=$(curl -sS -o /dev/null -w "%{http_code}" http://127.0.0.1:18080/)
@@ -192,7 +215,7 @@ jobs:
 
           kill $SRV 2>/dev/null || true
           wait $SRV 2>/dev/null || true
-          tail -6 /tmp/ch12.log
+          tail -6 ch12.log
 
   # ===========================================================================
   # Sanitizer：ASan + UBSan
