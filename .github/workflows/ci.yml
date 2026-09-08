@@ -194,28 +194,53 @@ jobs:
 
       - name: 第 12 章 HTTP —— curl 打真实请求
         run: |
-          set -e
           "$BIN/ch12_http_server" 18080 > ch12.log 2>&1 &
           SRV=$!
           sleep 1
-          code=$(curl -sS -o /dev/null -w "%{http_code}" http://127.0.0.1:18080/)
+
+          fail() { echo "::error::$1"; echo "--- 服务端日志 ---"; tail -30 ch12.log;
+                   kill -9 $SRV 2>/dev/null || true; exit 1; }
+
+          # 所有 curl 都要带 --max-time：服务端若接受了连接但不回响应，
+          # 不带超时的 curl 会永久阻塞，整个 job 只能等到 30 分钟上限。
+          code=$(curl -sS --max-time 15 -o /dev/null -w "%{http_code}" http://127.0.0.1:18080/) || code=000
           echo "GET / -> $code"
-          test "$code" = "200" || { echo "::error::首页没有返回 200"; exit 1; }
+          [ "$code" = "200" ] || fail "首页没有返回 200（实际 $code）"
 
-          code=$(curl -sS -o /dev/null -w "%{http_code}" http://127.0.0.1:18080/definitely-not-here)
+          code=$(curl -sS --max-time 15 -o /dev/null -w "%{http_code}" http://127.0.0.1:18080/definitely-not-here) || code=000
           echo "GET /definitely-not-here -> $code"
-          test "$code" = "404" || { echo "::error::不存在的路径没有返回 404"; exit 1; }
+          [ "$code" = "404" ] || fail "不存在的路径没有返回 404（实际 $code）"
 
+          # ---------------------------------------------------------------
+          # 并发请求。这里有个必须避开的坑：
+          #   for ...; do curl & done
+          #   wait                      # ← 错！
+          # 裸 wait 会等待**当前 shell 的所有后台任务**，其中包括上面那个
+          # 永不退出的 HTTP 服务器进程 —— 于是这一步永久挂住。
+          # 首轮 CI 就是这么卡到 job 超时的，而且日志里毫无线索。
+          # 正确做法：把要等的 PID 收集起来，只 wait 它们。
+          # ---------------------------------------------------------------
           echo "并发 50 个请求"
-          for i in $(seq 1 50); do curl -sS -o /dev/null http://127.0.0.1:18080/ & done
-          wait
-          code=$(curl -sS -o /dev/null -w "%{http_code}" http://127.0.0.1:18080/)
-          test "$code" = "200" || { echo "::error::并发后服务器不再响应"; exit 1; }
+          pids=""
+          for i in $(seq 1 50); do
+            curl -sS --max-time 20 -o /dev/null http://127.0.0.1:18080/ &
+            pids="$pids $!"
+          done
+          bad=0
+          for pid in $pids; do wait "$pid" || bad=$((bad + 1)); done
+          echo "失败的请求数：$bad / 50"
+          [ "$bad" -eq 0 ] || fail "$bad 个并发请求失败"
+
+          code=$(curl -sS --max-time 15 -o /dev/null -w "%{http_code}" http://127.0.0.1:18080/) || code=000
+          [ "$code" = "200" ] || fail "并发之后服务器不再响应（$code）"
           echo "并发后服务器仍然健康"
 
           kill $SRV 2>/dev/null || true
+          sleep 0.3
+          kill -9 $SRV 2>/dev/null || true
           wait $SRV 2>/dev/null || true
-          tail -6 ch12.log
+          echo "--- 服务端日志尾部 ---"
+          tail -8 ch12.log
 
   # ===========================================================================
   # Sanitizer：ASan + UBSan
