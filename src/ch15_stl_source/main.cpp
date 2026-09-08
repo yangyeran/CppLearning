@@ -50,6 +50,7 @@
 #include <vector>
 #include <cmath>
 #include <stdexcept>
+#include <initializer_list>
 
 // =============================================================================
 // 15.1  STL 的六大组件与设计哲学

@@ -26,6 +26,7 @@
 #include <string>
 #include <stdexcept>
 #include <system_error>
+#include <string_view>
 
 // -----------------------------------------------------------------------------
 // 平台头文件

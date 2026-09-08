@@ -30,6 +30,8 @@
 #include <memory>
 #include <cstring>
 #include <csignal>
+#include <cstdlib>
+#include <utility>
 
 // -----------------------------------------------------------------------------
 // 全局停止标志（Ctrl+C 时优雅退出）

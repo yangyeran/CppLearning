@@ -39,6 +39,9 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <cassert>
+#include <iterator>
+#include <utility>
 
 // =============================================================================
 // 17.1  关系模型与 SQL 分类

@@ -31,6 +31,10 @@
 #include <thread>
 #include <vector>
 #include <stdexcept>
+#include <condition_variable>
+#include <mutex>
+#include <string_view>
+#include <utility>
 
 using namespace reactor;
 using namespace std::chrono_literals;

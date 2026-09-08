@@ -43,6 +43,12 @@
 #include <vector>
 #include <cmath>
 #include <stdexcept>
+#include <cassert>
+#include <cstddef>
+#include <iterator>
+#include <span>
+#include <typeinfo>
+#include <utility>
 
 // 让「这个函数只是给你看，不要真调用」的意图更明显
 #define 仅供阅读

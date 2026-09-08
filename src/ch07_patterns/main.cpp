@@ -27,6 +27,7 @@
 #include <cstdio>
 #include <cctype>
 #include <stdexcept>
+#include <cstddef>
 
 // #############################################################################
 // 一、C++ 专属惯用法（比 GoF 更常用，先讲）

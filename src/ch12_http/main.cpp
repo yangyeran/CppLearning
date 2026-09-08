@@ -38,6 +38,8 @@
 #include <cstring>
 #include <ctime>
 #include <stdexcept>
+#include <cstdlib>
+#include <utility>
 
 static std::atomic<bool> g_running{true};
 extern "C" void on_signal(int) { g_running = false; }

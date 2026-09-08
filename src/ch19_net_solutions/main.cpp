@@ -33,6 +33,18 @@
 #include <cstring>
 #include <sstream>
 #include <stdexcept>
+#include <algorithm>
+#include <chrono>
+#include <condition_variable>
+#include <cstddef>
+#include <cstdint>
+#include <cstdlib>
+#include <functional>
+#include <iomanip>
+#include <memory>
+#include <string_view>
+#include <utility>
+#include <vector>
 
 using namespace std::chrono_literals;
 namespace fs = std::filesystem;

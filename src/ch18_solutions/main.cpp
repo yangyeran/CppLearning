@@ -37,6 +37,11 @@
 #include <utility>
 #include <variant>
 #include <vector>
+#include <cassert>
+#include <cstdint>
+#include <initializer_list>
+#include <string_view>
+#include <typeinfo>
 
 namespace {
 

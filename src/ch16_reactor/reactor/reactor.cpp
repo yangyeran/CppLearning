@@ -17,6 +17,12 @@
 #include <sstream>
 #include <stdexcept>
 #include <thread>
+#include <atomic>
+#include <memory>
+#include <mutex>
+#include <string_view>
+#include <utility>
+#include <vector>
 
 #ifdef _WIN32
 // WSAPoll 需要 Vista+。它与 POSIX 的 poll 结构体布局兼容，

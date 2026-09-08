@@ -41,6 +41,7 @@ import time
 # 写文件不会阻塞，测试结束后再读回来打印即可。
 # -----------------------------------------------------------------------------
 
+TAG = "drive_chat"
 TIMEOUT = 5.0
 
 
@@ -63,6 +64,16 @@ def dump_log(path, max_lines=30):
         os.remove(path)
     except OSError:
         pass
+
+
+def ci_error(msg):
+    """在 GitHub Actions 里把失败原因输出成 annotation。
+    这样即使拿不到完整日志（logs API 需要鉴权），也能通过公开的
+    annotations API 看到具体失败原因。"""
+    if os.environ.get("GITHUB_ACTIONS") == "true":
+        one_line = str(msg).replace("", " ").replace("
+", " ")[:900]
+        print(f"::error::[{TAG}] {one_line}", flush=True)
 
 
 def log(msg):
@@ -142,6 +153,7 @@ def main():
 
     if not os.path.exists(binary):
         log(f"找不到可执行文件: {binary}")
+        ci_error(f"找不到可执行文件: {binary}")
         return 1
 
     # 必须转成绝对路径并规范化分隔符：Windows 的 CreateProcess 不接受
@@ -204,6 +216,7 @@ def main():
 
     except Exception as e:
         log(f"失败: {type(e).__name__}: {e}")
+        ci_error(f"{type(e).__name__}: {e}")
         return 1
 
     finally:

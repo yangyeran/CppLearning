@@ -39,6 +39,7 @@
 #include <mutex>
 #include <set>
 #include <string>
+#include <memory>
 
 using namespace reactor;
 

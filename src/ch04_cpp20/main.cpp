@@ -34,6 +34,9 @@
 #include <atomic>
 #include <chrono>
 #include <type_traits>
+#include <cstddef>
+#include <iterator>
+#include <utility>
 
 #if __has_include(<format>)
 #  include <format>

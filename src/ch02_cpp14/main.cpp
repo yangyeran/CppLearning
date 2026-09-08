@@ -19,6 +19,9 @@
 #include <algorithm>
 #include <utility>
 #include <type_traits>
+#include <cassert>
+#include <functional>
+#include <initializer_list>
 
 // =============================================================================
 // 1) 返回类型推导：函数也能用 auto 了（C++11 只有 lambda 能）

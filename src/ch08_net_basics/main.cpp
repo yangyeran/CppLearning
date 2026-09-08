@@ -16,6 +16,7 @@
 #include <string>
 #include <cstdint>
 #include <cstring>
+#include <string_view>
 
 // -----------------------------------------------------------------------------
 // 以十六进制打印一段内存 —— 观察字节序的最直接办法

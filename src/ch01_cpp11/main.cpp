@@ -27,6 +27,10 @@
 #include <cstdio>
 #include <array>
 #include <initializer_list>
+#include <cassert>
+#include <cstddef>
+#include <cstdint>
+#include <utility>
 
 // =============================================================================
 // 演示用：一个「有资源」的类，用来观察拷贝 vs 移动

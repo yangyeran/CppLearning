@@ -15,6 +15,7 @@
 #include <vector>
 #include <stdexcept>
 #include <memory>
+#include <utility>
 
 // =============================================================================
 // 1. 命名空间 —— 防止名字冲突

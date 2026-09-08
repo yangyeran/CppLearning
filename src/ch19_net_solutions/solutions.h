@@ -33,6 +33,8 @@
 #include <unordered_map>
 #include <vector>
 #include <cctype>
+#include <cstddef>
+#include <utility>
 
 namespace sol {
 

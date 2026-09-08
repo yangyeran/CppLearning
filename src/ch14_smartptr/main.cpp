@@ -28,6 +28,8 @@
 #include <utility>
 #include <vector>
 #include <stdexcept>
+#include <cstddef>
+#include <type_traits>
 
 // =============================================================================
 // Part A —— 为什么需要智能指针

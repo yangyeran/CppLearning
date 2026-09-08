@@ -24,6 +24,8 @@
 #include <optional>
 #include <ranges>
 #include <utility>
+#include <cstdint>
+#include <type_traits>
 #include <version>          // 提供所有 __cpp_lib_xxx 特性测试宏
 
 // ---- 特性探测 ---------------------------------------------------------------
